@@ -1,0 +1,41 @@
+PREGUNTES PER DETERMINAR EL GRAU DE CONEIXEMENT D'ART:
+
+1. ¿Conoces "El Grito" de Munch?
+
+2. ¿Conoces "Las Meninas" de Velázquez?
+
+3. ¿Conoces "El nacimiento de Venus" de Botticelli?
+
+4. ¿Cuál de los siguientes títulos no pertenece a un cuadro de Leonardo da Vinci? 
+
+	a) La Gioconda (la Mona Lisa).
+	b) El jardín de las delicias.
+	c) La última cena.
+
+	[Respuesta: b]
+
+5. ¿Cuál de estas obras es de Dalí?
+
+	a) La persistencia de la memoria.
+	b) Alegoría de la poesía.
+	c) American Gothic.
+	d) Alegoría de la fe.
+
+	[Respuesta: a]
+
+6. ¿Quién pintó el cuadro "Las Hilanderas"?
+	
+	a) El Greco.
+	b) Francisco de Goya.
+	c) Diego Velázquez.
+
+	[Respuesta: c]
+
+7. ¿Quién pintó "El Beso"?
+	
+	a) Klimt
+	b) Tiziano
+	c) Yañez
+	d) El Greco.
+
+	[Respuesta: a]
