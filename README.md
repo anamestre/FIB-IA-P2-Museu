@@ -17,3 +17,4 @@ SUBPROBLEMES EN QUÈ HEM DIVIDIT L'ENUNCIAT:
 DATES D'ENTREGA:
 - Punt extra: 25 de novembre.
 - Entrega final: 12 de desembre.
+- Entrega presencial: 14, 15 i 16 de desembre.
