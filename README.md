@@ -6,7 +6,8 @@ CONJUNT DE DADES:
 - Calcular rellevància.      <- En procés.
 - Dissenyar el museu.
 
-METODOLOGIA DE PROBLEMES: Proponer y aplicar.
+METODOLOGIA DE PROBLEMES: 
+- Proponer y aplicar.
 
 SUBPROBLEMES EN QUÈ HEM DIVIDIT L'ENUNCIAT:   
 - Obtenir la informació de la visita.
