@@ -4,7 +4,63 @@ PREGUNTES INICIALS:
 
 2. ¿Cuál es la media de edad del grupo?
 
-3. ¿Qué preferencia tiene respecto a estilos de cuadros?
+3. ¿Qué preferencia tiene respecto a autores?
+
+	1) Abraham Bloemaert
+	2) Adrien Cronenburch
+	3) Alessandro Bonvicino
+	4) Claude Oscar Monet
+	5) Diego Velázquez
+	6) Domenico Beccafumi
+	7) Edvard Munch
+	8) El Bosco
+	9) Eugène Bracht
+	10) Federico Barocci
+	11) Francisco de Goya
+	12) Francisco de Zurbarán
+	13) Georges Seurat
+	14) Grant Wood
+	15) Gustav Klimt
+	16) Jacques-Louis David
+	17) Jan Brueghel el Mozo
+	18) Jan Van Eyck
+	19) Leandro Bassano
+	20) Leonardo da Vinci
+	21) Miguel Ángel
+	22) Pablo Picasso
+	23) Paul Brill
+	24) Paul Cézanne
+	25) Rafael de Urbino
+	26) Rembrandt
+	27) Rubens
+	28) Sandro Botticelli
+	29) Santiago Rusiñol
+	30) Tiziano
+	31) Vicencio Campi
+	32) Vincent Van Gogh
+	33) Virxilio Blanco
+
+	x) Indiferente.
+
+4. ¿Qué preferencia tiene respecto a la temática de una obra?
+
+	a) Religión.
+	b) Retrato.
+	c) Mitología y Alegorías.
+	d) Paisajes y Vistas.
+	e) Costumbres.
+	f) Retrato.
+	g) Protesta social.
+	h) Historia.
+	i) Bodegón.
+	j) Amor.
+	k) Desnudo.
+	l) Interior.
+
+	x) Indiferente.
+
+
+5. ¿Qué preferencia tiene respecto a estilos de cuadros?
 
 	a) Románico.
 	b) Manierismo.
@@ -27,7 +83,7 @@ PREGUNTES INICIALS:
 
 	x) Indiferente.
 
-4. ¿Qué preferencia tiene respecto a épocas?
+6. ¿Qué preferencia tiene respecto a épocas?
 	
 	a) Románico.
 	b) Renacimiento.
