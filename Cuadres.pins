@@ -1,7 +1,10 @@
-; Tue Nov 29 17:18:57 CET 2016
+; Tue Nov 29 17:54:23 CET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
+
+([Cuadres_Class0] of  Visita
+)
 
 ([Cuadres_Class1] of  Epoca
 
@@ -37,7 +40,7 @@
 	(Relevancia 4)
 	(Sala 4)
 	(Tematica_cuadro [Cuadres_Class22])
-	(Titulo "Napoleón cruzando los Alpes"))
+	(Titulo "Napoleon cruzando los Alpes"))
 
 ([Cuadres_Class101] of  Cuadro
 
@@ -76,7 +79,7 @@
 	(Relevancia 4)
 	(Sala 3)
 	(Tematica_cuadro [Cuadres_Class27])
-	(Titulo "La crucifixión"))
+	(Titulo "La crucifixion"))
 
 ([Cuadres_Class104] of  Cuadro
 
@@ -115,7 +118,7 @@
 	(Relevancia 6)
 	(Sala 3)
 	(Tematica_cuadro [Cuadres_Class27])
-	(Titulo "Creación de Adán"))
+	(Titulo "Creación de Adan"))
 
 ([Cuadres_Class107] of  Cuadro
 
@@ -128,7 +131,7 @@
 	(Relevancia 4)
 	(Sala 2)
 	(Tematica_cuadro [Cuadres_Class17])
-	(Titulo "Arlequín pensativo"))
+	(Titulo "Arlequin pensativo"))
 
 ([Cuadres_Class108] of  Cuadro
 
@@ -154,7 +157,7 @@
 	(Relevancia 5)
 	(Sala 2)
 	(Tematica_cuadro [Cuadres_Class21])
-	(Titulo "Las señoritas de Avignon"))
+	(Titulo "Las senoritas de Avignon"))
 
 ([Cuadres_Class11] of  Estilo
 
@@ -163,7 +166,7 @@
 		[Cuadres_Class86]
 		[Cuadres_Class96]
 		[Cuadres_Class85])
-	(Nombre_estilo "Escuela española")
+	(Nombre_estilo "Escuela espanola")
 	(Pintores_estilo
 		[Cuadres_Class16]
 		[Cuadres_Class50]))
@@ -243,7 +246,7 @@
 	(Pintado_por [Cuadres_Class64])
 	(Relevancia 2)
 	(Sala 2)
-	(Titulo "Autoretrato con bastón"))
+	(Titulo "Autoretrato con baston"))
 
 ([Cuadres_Class116] of  Cuadro
 
@@ -282,7 +285,7 @@
 	(Relevancia 0)
 	(Sala 3)
 	(Tematica_cuadro [Cuadres_Class24])
-	(Titulo "Alegoría de la Poesía"))
+	(Titulo "Alegoria de la Poesia"))
 
 ([Cuadres_Class119] of  Cuadro
 
@@ -295,7 +298,7 @@
 	(Relevancia 0)
 	(Sala 1)
 	(Tematica_cuadro [Cuadres_Class81])
-	(Titulo "Maria Rusiñol en el Cau Ferrat"))
+	(Titulo "Maria Rusinol en el Cau Ferrat"))
 
 ([Cuadres_Class12] of  Estilo
 
@@ -379,7 +382,7 @@
 	(Relevancia 0)
 	(Sala 1)
 	(Tematica_cuadro [Cuadres_Class81])
-	(Titulo "Barcazas de carbón"))
+	(Titulo "Barcazas de carbon"))
 
 ([Cuadres_Class126] of  Cuadro
 
@@ -405,7 +408,7 @@
 	(Relevancia 4)
 	(Sala 5)
 	(Tematica_cuadro [Cuadres_Class23])
-	(Titulo "La habitación de Vincent en Arlés"))
+	(Titulo "La habitación de Vincent en Arles"))
 
 ([Cuadres_Class128] of  Cuadro
 
@@ -513,7 +516,7 @@
 		[Cuadres_Class89]
 		[Cuadres_Class102]
 		[Cuadres_Class103])
-	(Nombre_estilo "Gótico flamenco")
+	(Nombre_estilo "Gotico flamenco")
 	(Pintores_estilo
 		[Cuadres_Class46]
 		[Cuadres_Class48]
@@ -530,8 +533,8 @@
 		[Cuadres_Class82]
 		[Cuadres_Class85]
 		[Cuadres_Class86])
-	(Nacionalidad "español")
-	(Nombre "Diego Velázquez"))
+	(Nacionalidad "espanol")
+	(Nombre "Diego Velazquez"))
 
 ([Cuadres_Class17] of  Tematica
 
@@ -570,7 +573,7 @@
 		[Cuadres_Class89]
 		[Cuadres_Class102]
 		[Cuadres_Class103])
-	(Nombre_epoca "Gótico")
+	(Nombre_epoca "Gotico")
 	(Pintores_epoca
 		[Cuadres_Class46]
 		[Cuadres_Class48]
@@ -582,7 +585,7 @@
 	(Cuadros_tematica
 		[Cuadres_Class96]
 		[Cuadres_Class112])
-	(Nombre_tematica "Bodegón"))
+	(Nombre_tematica "Bodegon"))
 
 ([Cuadres_Class21] of  Tematica
 
@@ -617,7 +620,7 @@
 		[Cuadres_Class116]
 		[Cuadres_Class117]
 		[Cuadres_Class118])
-	(Nombre_tematica "Mitología y alegorías"))
+	(Nombre_tematica "Mitologia y alegorias"))
 
 ([Cuadres_Class25] of  Tematica
 
@@ -650,7 +653,7 @@
 		[Cuadres_Class89]
 		[Cuadres_Class103]
 		[Cuadres_Class106])
-	(Nombre_tematica "Religión"))
+	(Nombre_tematica "Religion"))
 
 ([Cuadres_Class28] of  Estilo
 
@@ -786,7 +789,7 @@
 ([Cuadres_Class37] of  Estilo
 
 	(Cuadros_estilo [Cuadres_Class72])
-	(Nombre_estilo "Románico")
+	(Nombre_estilo "Romanico")
 	(Pintores_estilo [Cuadres_Class73]))
 
 ([Cuadres_Class38] of  Estilo
@@ -810,7 +813,7 @@
 ([Cuadres_Class4] of  Epoca
 
 	(Cuadros_epoca [Cuadres_Class72])
-	(Nombre_epoca "Románico")
+	(Nombre_epoca "Romanico")
 	(Pintores_epoca [Cuadres_Class73]))
 
 ([Cuadres_Class40] of  Pintor
@@ -818,7 +821,7 @@
 	(Epocas_pintor [Cuadres_Class3])
 	(Estilos_pintor [Cuadres_Class29])
 	(Ha_pintado [Cuadres_Class74])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Abraham Bloemaert"))
 
 ([Cuadres_Class41] of  Pintor
@@ -848,7 +851,7 @@
 		[Cuadres_Class78]
 		[Cuadres_Class79]
 		[Cuadres_Class80])
-	(Nacionalidad "francés")
+	(Nacionalidad "frances")
 	(Nombre "Claude Oscar Monet"))
 
 ([Cuadres_Class44] of  Pintor
@@ -872,7 +875,7 @@
 	(Epocas_pintor [Cuadres_Class2])
 	(Estilos_pintor [Cuadres_Class15])
 	(Ha_pintado [Cuadres_Class89])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "El Bosco"))
 
 ([Cuadres_Class47] of  Pintor
@@ -880,8 +883,8 @@
 	(Epocas_pintor [Cuadres_Class6])
 	(Estilos_pintor [Cuadres_Class35])
 	(Ha_pintado [Cuadres_Class90])
-	(Nacionalidad "alemán")
-	(Nombre "Eugène Bracht"))
+	(Nacionalidad "aleman")
+	(Nombre "Eugene Bracht"))
 
 ([Cuadres_Class48] of  Pintor
 
@@ -903,7 +906,7 @@
 		[Cuadres_Class93]
 		[Cuadres_Class94]
 		[Cuadres_Class95])
-	(Nacionalidad "español")
+	(Nacionalidad "espanol")
 	(Nombre "Francisco de Goya"))
 
 ([Cuadres_Class5] of  Epoca
@@ -926,15 +929,15 @@
 	(Epocas_pintor [Cuadres_Class1])
 	(Estilos_pintor [Cuadres_Class11])
 	(Ha_pintado [Cuadres_Class96])
-	(Nacionalidad "español")
-	(Nombre "Francisco de Zurbarán"))
+	(Nacionalidad "espanol")
+	(Nombre "Francisco de Zurbaran"))
 
 ([Cuadres_Class51] of  Pintor
 
 	(Epocas_pintor [Cuadres_Class6])
 	(Estilos_pintor [Cuadres_Class34])
 	(Ha_pintado [Cuadres_Class98])
-	(Nacionalidad "francés")
+	(Nacionalidad "frances")
 	(Nombre "Georges Seurat"))
 
 ([Cuadres_Class52] of  Pintor
@@ -950,7 +953,7 @@
 	(Epocas_pintor [Cuadres_Class7])
 	(Estilos_pintor [Cuadres_Class39])
 	(Ha_pintado [Cuadres_Class99])
-	(Nacionalidad "austríaco")
+	(Nacionalidad "austriaco")
 	(Nombre "Gustav Klimt"))
 
 ([Cuadres_Class54] of  Pintor
@@ -958,7 +961,7 @@
 	(Epocas_pintor [Cuadres_Class6])
 	(Estilos_pintor [Cuadres_Class31])
 	(Ha_pintado [Cuadres_Class100])
-	(Nacionalidad "francés")
+	(Nacionalidad "frances")
 	(Nombre "Jacques-Louis David"))
 
 ([Cuadres_Class55] of  Pintor
@@ -966,7 +969,7 @@
 	(Epocas_pintor [Cuadres_Class3])
 	(Estilos_pintor [Cuadres_Class29])
 	(Ha_pintado [Cuadres_Class101])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Jan Brueghel el Mozo"))
 
 ([Cuadres_Class56] of  Pintor
@@ -976,7 +979,7 @@
 	(Ha_pintado
 		[Cuadres_Class102]
 		[Cuadres_Class103])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Jan Van Eyck"))
 
 ([Cuadres_Class57] of  Pintor
@@ -1001,7 +1004,7 @@
 	(Estilos_pintor [Cuadres_Class9])
 	(Ha_pintado [Cuadres_Class106])
 	(Nacionalidad "italiano")
-	(Nombre "Miguel Ángel"))
+	(Nombre "Miguel Angel"))
 
 ([Cuadres_Class6] of  Epoca
 
@@ -1053,7 +1056,7 @@
 		[Cuadres_Class108]
 		[Cuadres_Class109]
 		[Cuadres_Class110])
-	(Nacionalidad "español")
+	(Nacionalidad "espanol")
 	(Nombre "Pablo Picasso"))
 
 ([Cuadres_Class61] of  Pintor
@@ -1061,7 +1064,7 @@
 	(Epocas_pintor [Cuadres_Class3])
 	(Estilos_pintor [Cuadres_Class29])
 	(Ha_pintado [Cuadres_Class111])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Paul Brill"))
 
 ([Cuadres_Class62] of  Pintor
@@ -1069,8 +1072,8 @@
 	(Epocas_pintor [Cuadres_Class6])
 	(Estilos_pintor [Cuadres_Class35])
 	(Ha_pintado [Cuadres_Class112])
-	(Nacionalidad "francés")
-	(Nombre "Paul Cézanne"))
+	(Nacionalidad "frances")
+	(Nombre "Paul Cezanne"))
 
 ([Cuadres_Class63] of  Pintor
 
@@ -1087,7 +1090,7 @@
 	(Ha_pintado
 		[Cuadres_Class114]
 		[Cuadres_Class115])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Rembrandt"))
 
 ([Cuadres_Class65] of  Pintor
@@ -1095,7 +1098,7 @@
 	(Epocas_pintor [Cuadres_Class1])
 	(Estilos_pintor [Cuadres_Class12])
 	(Ha_pintado [Cuadres_Class116])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Rubens"))
 
 ([Cuadres_Class66] of  Pintor
@@ -1115,15 +1118,15 @@
 	(Ha_pintado
 		[Cuadres_Class118]
 		[Cuadres_Class119])
-	(Nacionalidad "español")
-	(Nombre "Santiago Rusiñol"))
+	(Nacionalidad "espanol")
+	(Nombre "Santiago Rusinol"))
 
 ([Cuadres_Class68] of  Pintor
 
 	(Epocas_pintor [Cuadres_Class6])
 	(Estilos_pintor [Cuadres_Class35])
 	(Ha_pintado [Cuadres_Class129])
-	(Nacionalidad "español")
+	(Nacionalidad "espanol")
 	(Nombre "Virxilio Blanco"))
 
 ([Cuadres_Class69] of  Pintor
@@ -1141,7 +1144,7 @@
 		[Cuadres_Class126]
 		[Cuadres_Class127]
 		[Cuadres_Class128])
-	(Nacionalidad "holandés")
+	(Nacionalidad "holandes")
 	(Nombre "Vincent Van Gogh"))
 
 ([Cuadres_Class7] of  Epoca
@@ -1185,14 +1188,14 @@
 	(Relevancia 1)
 	(Sala 3)
 	(Tematica_cuadro [Cuadres_Class27])
-	(Titulo "El diluvio o El arca de Noé"))
+	(Titulo "El diluvio o El arca de Noe"))
 
 ([Cuadres_Class73] of  Pintor
 
 	(Epocas_pintor [Cuadres_Class4])
 	(Estilos_pintor [Cuadres_Class37])
 	(Ha_pintado [Cuadres_Class72])
-	(Nombre "(anónimo)"))
+	(Nombre "(anonimo)"))
 
 ([Cuadres_Class74] of  Cuadro
 
@@ -1218,7 +1221,7 @@
 	(Relevancia 0)
 	(Sala 2)
 	(Tematica_cuadro [Cuadres_Class17])
-	(Titulo "Dama y niña"))
+	(Titulo "Dama y nina"))
 
 ([Cuadres_Class76] of  Cuadro
 
@@ -1231,7 +1234,7 @@
 	(Relevancia 0)
 	(Sala 3)
 	(Tematica_cuadro [Cuadres_Class24])
-	(Titulo "Alegoría de la Fe"))
+	(Titulo "Alegoria de la Fe"))
 
 ([Cuadres_Class77] of  Cuadro
 
@@ -1289,7 +1292,7 @@
 	(Relevancia 1)
 	(Sala 1)
 	(Tematica_cuadro [Cuadres_Class81])
-	(Titulo "Mujer en el jardín de Saint-Adresse"))
+	(Titulo "Mujer en el jardin de Saint-Adresse"))
 
 ([Cuadres_Class81] of  Tematica
 
@@ -1407,7 +1410,7 @@
 	(Relevancia 0)
 	(Sala 5)
 	(Tematica_cuadro [Cuadres_Class25])
-	(Titulo "Clouds over the Lüneburger Heath"))
+	(Titulo "Clouds over the Luneburger Heath"))
 
 ([Cuadres_Class91] of  Cuadro
 
@@ -1420,7 +1423,7 @@
 	(Relevancia 0)
 	(Sala 3)
 	(Tematica_cuadro [Cuadres_Class24])
-	(Titulo "Aeneas' Flight from Troy"))
+	(Titulo "Aeneas Flight from Troy"))
 
 ([Cuadres_Class92] of  Cuadro
 
@@ -1484,7 +1487,7 @@
 	(Relevancia 4)
 	(Sala 1)
 	(Tematica_cuadro [Cuadres_Class20])
-	(Titulo "Bodegón"))
+	(Titulo "Bodegon"))
 
 ([Cuadres_Class97] of  Cuadro
 

@@ -1,4 +1,4 @@
-; Tue Nov 29 17:18:57 CET 2016
+; Tue Nov 29 17:54:23 CET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
@@ -33,10 +33,6 @@
 ;+		(allowed-classes Epoca)
 ;+		(inverse-slot Pintores_epoca)
 		(create-accessor read-write))
-	(single-slot Rellev%C3%A0ncia
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot Titulo
 		(type STRING)
 ;+		(cardinality 0 1)
@@ -69,10 +65,6 @@
 ;+		(allowed-classes Tamanyo)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot h
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot Ha_pintado
 		(type INSTANCE)
 ;+		(allowed-classes Cuadro)
@@ -99,18 +91,10 @@
 ;+		(allowed-classes Preferencia)
 ;+		(inverse-slot Pref_estilo)
 		(create-accessor read-write))
-	(single-slot w
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot Pintor_pref
 		(type INSTANCE)
 ;+		(allowed-classes Preferencia)
 ;+		(inverse-slot Pref_pintor)
-		(create-accessor read-write))
-	(single-slot T%C3%ADtol
-		(type STRING)
-;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Complejidad
 		(type INTEGER)
@@ -120,10 +104,6 @@
 		(type INSTANCE)
 ;+		(allowed-classes Visita)
 ;+		(inverse-slot Visita_pref)
-		(create-accessor read-write))
-	(single-slot Estil
-		(type STRING)
-;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Relevancia
 		(type INTEGER)
@@ -150,19 +130,11 @@
 ;+		(allowed-classes Cuadro)
 ;+		(inverse-slot Epoca_cuadro)
 		(create-accessor read-write))
-	(single-slot Tem%C3%A0tica
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot Dim
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Autor
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
-	(single-slot %C3%88poca
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
@@ -184,10 +156,6 @@
 		(type INSTANCE)
 ;+		(allowed-classes Cuadro)
 ;+		(inverse-slot Estilo_cuadro)
-		(create-accessor read-write))
-	(single-slot Complexitat
-		(type STRING)
-;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Dias
 		(type INTEGER)
@@ -219,10 +187,6 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Any
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot Pref_tematica
 		(type INSTANCE)
 ;+		(allowed-classes Tematica)
@@ -245,13 +209,13 @@
 ;+		(allowed-classes Epoca)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Complejidad
-		(type INTEGER)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot Pintado_por
 		(type INSTANCE)
 ;+		(allowed-classes Pintor)
+;+		(cardinality 0 1)
+		(create-accessor read-write))
+	(single-slot Complejidad
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Anyo
@@ -266,8 +230,9 @@
 		(type STRING)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Sala
-		(type INTEGER)
+	(single-slot Estilo_cuadro
+		(type INSTANCE)
+;+		(allowed-classes Estilo)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
 	(single-slot Tematica_cuadro
@@ -275,9 +240,8 @@
 ;+		(allowed-classes Tematica)
 ;+		(cardinality 0 1)
 		(create-accessor read-write))
-	(single-slot Estilo_cuadro
-		(type INSTANCE)
-;+		(allowed-classes Estilo)
+	(single-slot Sala
+		(type INTEGER)
 ;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
@@ -300,13 +264,13 @@
 		(type INSTANCE)
 ;+		(allowed-classes Cuadro)
 		(create-accessor read-write))
-	(single-slot Nacionalidad
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot Pintor_pref
 		(type INSTANCE)
 ;+		(allowed-classes Preferencia)
+		(create-accessor read-write))
+	(single-slot Nacionalidad
+		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Epoca
@@ -340,13 +304,13 @@
 		(type INSTANCE)
 ;+		(allowed-classes Preferencia)
 		(create-accessor read-write))
-	(single-slot Nombre_estilo
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(multislot Pintores_estilo
 		(type INSTANCE)
 ;+		(allowed-classes Pintor)
+		(create-accessor read-write))
+	(single-slot Nombre_estilo
+		(type STRING)
+;+		(cardinality 0 1)
 		(create-accessor read-write)))
 
 (defclass Tematica
@@ -415,13 +379,13 @@
 		(type INSTANCE)
 ;+		(allowed-classes Pintor)
 		(create-accessor read-write))
-	(multislot Pref_estilo
-		(type INSTANCE)
-;+		(allowed-classes Estilo)
-		(create-accessor read-write))
 	(multislot Pref_visita
 		(type INSTANCE)
 ;+		(allowed-classes Visita)
+		(create-accessor read-write))
+	(multislot Pref_estilo
+		(type INSTANCE)
+;+		(allowed-classes Estilo)
 		(create-accessor read-write))
 	(multislot Pref_tematica
 		(type INSTANCE)
