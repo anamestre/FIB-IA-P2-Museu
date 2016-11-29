@@ -3,6 +3,7 @@
 ;+ (version "3.5")
 ;+ (build "Build 663")
 
+;;Ontologia --------------------------------------------------------------------
 
 (defclass %3ACLIPS_TOP_LEVEL_SLOT_CLASS "Fake class to save top-level slot information"
 	(is-a USER)
@@ -432,13 +433,14 @@
 ;+		(allowed-classes Epoca)
 		(create-accessor read-write)))
 
+
+;;Instancias --------------------------------------------------------------------
+
 (definstances instancias
 ; Tue Nov 29 17:54:23 CET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
-
-
 
 ([Cuadres_Class1] of  Epoca
 
@@ -1961,3 +1963,68 @@
 	(Sala 2)
 	(Tematica_cuadro [Cuadres_Class19])
 	(Titulo "El beso")))
+
+
+;;; Declaracion de modulos ----------------------------
+
+;;; Modulo principal de utilidades
+(defmodule MAIN (export ?ALL))
+
+;;; Modulo de recopilacion de los datos del usuario
+(defmodule recopilacion-grupo
+	(import MAIN ?ALL)
+	(export ?ALL)
+)
+
+
+;; DEBE HABER MAS MODULOS (SOLO ESTE PARA RECOGER DATOS PERO HAY MAS!!!!!!!!!!!!!!!!!!!!!!!!
+;;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+
+
+;;; Declaracion de templates --------------------------
+
+;;; Template para los datos del grupo
+(deftemplate MAIN::datos_grupo
+	(slot nombre (type STRING))
+	(slot sexo (type SYMBOL) (default desconocido))
+	(slot edad (type INTEGER) (default -1))
+	(slot familia (type SYMBOL) (default desconocido))
+)
+
+;;; Template para las preferencias del usuario
+(deftemplate MAIN::preferencias_grupo
+	(multislot generos-favoritos (type INSTANCE))
+	(multislot tematicas-favoritas (type INSTANCE))
+	(multislot nacionalidades (type INSTANCE))
+	(multislot idiomas (type INSTANCE))
+)
+
+;;; Template para una lista de recomendaciones
+(deftemplate MAIN::lista_recomendaciones
+	(multislot recomendaciones (type INSTANCE))
+)
+
+
+
+(defrule MAIN::initialRule "Regla inicial"
+	(declare (salience 10))
+	=>
+	(printout t "╔════════════════════════════════════════════════════════╗" crlf)
+  	(printout t "║         Personalización de visitas a un museo          ║" crlf)
+	(printout t "╚════════════════════════════════════════════════════════╝" crlf)
+  	(printout t crlf)  	
+	(printout t "¡Bienvenido! A continuación se le formularán una serie de preguntas para poder recomendarle una visita adecuada a sus preferencias." crlf)
+	(printout t crlf)
+	(focus recopilacion-grupo)
+)
+
+;;Recopilacion de datos de entrada --------------------------------------------------------------------
+
+(defrule recopilacion-grupo::establecer-tamanyo "Establece el nombre de usuario, es la primera pregunta"
+	(not (Tamanyo))
+	=>
+	(bind ?Descripcion (pregunta-general "¿Cómo se llama? "))
+	(assert (Tamanyo (Tamanyo ?Tamanyo)))
+)
