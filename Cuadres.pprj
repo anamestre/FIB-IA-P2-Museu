@@ -1,4 +1,4 @@
-; Thu Nov 24 17:03:56 CET 2016
+; Tue Nov 29 17:18:44 CET 2016
 ; 
 ;+ (version "3.5")
 ;+ (build "Build 663")
@@ -20,9 +20,16 @@
 ([BROWSER_SLOT_NAMES] of  Property_List
 
 	(properties
-		[Cuadres_ProjectKB_Class135]
-		[Cuadres_ProjectKB_Class136]
-		[Cuadres_ProjectKB_Class137]))
+		[Cuadres_ProjectKB_Class10190]
+		[Cuadres_ProjectKB_Class10191]
+		[Cuadres_ProjectKB_Class10192]
+		[Cuadres_ProjectKB_Class10193]
+		[Cuadres_ProjectKB_Class10194]
+		[Cuadres_ProjectKB_Class10195]
+		[Cuadres_ProjectKB_Class10196]
+		[Cuadres_ProjectKB_Class10197]
+		[Cuadres_ProjectKB_Class10198]
+		[Cuadres_ProjectKB_Class10199]))
 
 ([CLSES_TAB] of  Widget
 
@@ -37,45 +44,246 @@
 
 	(name ":CREATOR"))
 
-([Cuadres_ProjectKB_Class104] of  String
+([Cuadres_ProjectKB_Class10190] of  String
 
-	(name "SearchTab_Query"))
+	(name "Conocimiento")
+	(string_value "Nivel"))
 
-([Cuadres_ProjectKB_Class135] of  String
+([Cuadres_ProjectKB_Class10191] of  String
+
+	(name "Estilo")
+	(string_value "Nombre_estilo"))
+
+([Cuadres_ProjectKB_Class10192] of  String
 
 	(name ":INSTANCE-ANNOTATION")
 	(string_value "%3AANNOTATION-TEXT"))
 
-([Cuadres_ProjectKB_Class136] of  String
+([Cuadres_ProjectKB_Class10193] of  String
 
-	(name ":META-CLASS")
-	(string_value "%3ANAME"))
+	(name "Pintor")
+	(string_value "Nombre"))
 
-([Cuadres_ProjectKB_Class137] of  String
+([Cuadres_ProjectKB_Class10194] of  String
+
+	(name "Cuadro")
+	(string_value "Titulo"))
+
+([Cuadres_ProjectKB_Class10195] of  String
+
+	(name "Epoca")
+	(string_value "Nombre_epoca"))
+
+([Cuadres_ProjectKB_Class10196] of  String
+
+	(name "Tamanyo")
+	(string_value "Descripcion"))
+
+([Cuadres_ProjectKB_Class10197] of  String
 
 	(name ":PAL-CONSTRAINT")
 	(string_value "%3APAL-NAME"))
 
-([Cuadres_ProjectKB_Class138] of  Map_Entry
+([Cuadres_ProjectKB_Class10198] of  String
+
+	(name ":META-CLASS")
+	(string_value "%3ANAME"))
+
+([Cuadres_ProjectKB_Class10199] of  String
+
+	(name "Tematica")
+	(string_value "Nombre_tematica"))
+
+([Cuadres_ProjectKB_Class10200] of  Map_Entry
 
 	(key "add_name_on_instance_form")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([Cuadres_ProjectKB_Class139] of  Map_Entry
+([Cuadres_ProjectKB_Class10201] of  Map_Entry
 
 	(key "change_tracking_active")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
 
-([Cuadres_ProjectKB_Class140] of  Map_Entry
+([Cuadres_ProjectKB_Class10202] of  Map_Entry
 
 	(key "suppress_instance_counting")
 	(key_class "java.lang.String")
 	(value "false")
 	(value_class "java.lang.String"))
+
+([Cuadres_ProjectKB_Class104] of  String
+
+	(name "SearchTab_Query"))
+
+([Cuadres_ProjectKB_Class52] of  Widget
+
+	(is_hidden FALSE)
+	(name "row")
+	(property_list [Cuadres_ProjectKB_Class53])
+	(widget_class_name "edu.stanford.smi.protege.widget.FormWidget"))
+
+([Cuadres_ProjectKB_Class53] of  Property_List
+
+	(properties
+		[Cuadres_ProjectKB_Class54]
+		[Cuadres_ProjectKB_Class55]
+		[Cuadres_ProjectKB_Class57]
+		[Cuadres_ProjectKB_Class59]
+		[Cuadres_ProjectKB_Class61]
+		[Cuadres_ProjectKB_Class63]
+		[Cuadres_ProjectKB_Class65]
+		[Cuadres_ProjectKB_Class67]
+		[Cuadres_ProjectKB_Class69]
+		[Cuadres_ProjectKB_Class71]
+		[Cuadres_ProjectKB_Class73]))
+
+([Cuadres_ProjectKB_Class54] of  Property_List
+
+	(name "layout properties"))
+
+([Cuadres_ProjectKB_Class55] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Títol")
+	(property_list [Cuadres_ProjectKB_Class56])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 400)
+	(y 0))
+
+([Cuadres_ProjectKB_Class56] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class57] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Temàtica")
+	(property_list [Cuadres_ProjectKB_Class58])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 200)
+	(y 120))
+
+([Cuadres_ProjectKB_Class58] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class59] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Complexitat")
+	(property_list [Cuadres_ProjectKB_Class60])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 0)
+	(y 120))
+
+([Cuadres_ProjectKB_Class60] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class61] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Autor")
+	(property_list [Cuadres_ProjectKB_Class62])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 0)
+	(y 60))
+
+([Cuadres_ProjectKB_Class62] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class63] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Època")
+	(property_list [Cuadres_ProjectKB_Class64])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 400)
+	(y 120))
+
+([Cuadres_ProjectKB_Class64] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class65] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Estil")
+	(property_list [Cuadres_ProjectKB_Class66])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 0)
+	(y 180))
+
+([Cuadres_ProjectKB_Class66] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class67] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "w")
+	(property_list [Cuadres_ProjectKB_Class68])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 400)
+	(y 60))
+
+([Cuadres_ProjectKB_Class68] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class69] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "h")
+	(property_list [Cuadres_ProjectKB_Class70])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 200)
+	(y 0))
+
+([Cuadres_ProjectKB_Class70] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class71] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Any")
+	(property_list [Cuadres_ProjectKB_Class72])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 0)
+	(y 0))
+
+([Cuadres_ProjectKB_Class72] of  Property_List
+)
+
+([Cuadres_ProjectKB_Class73] of  Widget
+
+	(height 60)
+	(is_hidden FALSE)
+	(name "Rellevància")
+	(property_list [Cuadres_ProjectKB_Class74])
+	(widget_class_name "edu.stanford.smi.protege.widget.TextFieldWidget")
+	(width 200)
+	(x 200)
+	(y 60))
+
+([Cuadres_ProjectKB_Class74] of  Property_List
+)
 
 ([FORMS_TAB] of  Widget
 
@@ -114,9 +322,9 @@
 ([KB_829443_Class1] of  Map
 
 	(entries
-		[Cuadres_ProjectKB_Class138]
-		[Cuadres_ProjectKB_Class139]
-		[Cuadres_ProjectKB_Class140]))
+		[Cuadres_ProjectKB_Class10200]
+		[Cuadres_ProjectKB_Class10201]
+		[Cuadres_ProjectKB_Class10202]))
 
 ([KB_829443_Class10] of  Property_List
 )
@@ -172,9 +380,6 @@
 	(is_hidden TRUE)
 	(property_list [KB_829443_Class20])
 	(widget_class_name "edu.stanford.smi.protege.widget.instance_tree.InstanceTreeTab"))
-
-([KB_829443_Class2] of  Map
-)
 
 ([KB_829443_Class20] of  Property_List
 )
@@ -546,6 +751,9 @@
 
 	(properties [Cuadres_ProjectKB_Class104]))
 
+([KB_979541_Class3] of  Map
+)
+
 ([LAYOUT_PROPERTIES] of  Property_List
 
 	(name "layout properties")
@@ -630,8 +838,8 @@
 	(browser_slot_names [BROWSER_SLOT_NAMES])
 	(customized_instance_widgets
 		[INSTANCE_ANNOTATION_FORM_WIDGET]
-		[STANDARD_FACET_FORM_WIDGET]
 		[STANDARD_SLOT_FORM_WIDGET]
+		[STANDARD_FACET_FORM_WIDGET]
 		[PAL_FORM_WIDGET]
 		[STANDARD_CLASS_FORM_WIDGET])
 	(default_cls_metaclass ":STANDARD-CLASS")
