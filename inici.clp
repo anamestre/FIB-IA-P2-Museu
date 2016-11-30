@@ -2105,6 +2105,31 @@
     ?lista
 )
 
+(defrule recopilacion-prefs::establecer-genero-favorito "Establece el genero favorito del usuario"
+	?hecho <- (genero-favorito choose)
+	?pref <- (preferencias)
+	=>
+	(bind $?obj-generos (find-all-instances ((?inst Genero)) TRUE))
+	(bind $?nom-generos (create$ ))
+	(loop-for-count (?i 1 (length$ $?obj-generos)) do
+		(bind ?curr-obj (nth$ ?i ?obj-generos))
+		(bind ?curr-nom (send ?curr-obj get-genero))
+		(bind $?nom-generos(insert$ $?nom-generos (+ (length$ $?nom-generos) 1) ?curr-nom))
+	)
+	(bind ?escogido (pregunta-multi "Escoja sus géneros favoritos: " $?nom-generos))
+	
+	(bind $?respuesta (create$ ))
+	(loop-for-count (?i 1 (length$ ?escogido)) do
+		(bind ?curr-index (nth$ ?i ?escogido))
+		(bind ?curr-gen (nth$ ?curr-index ?obj-generos))
+		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-gen))
+	)
+	
+	(retract ?hecho)
+	(assert (genero-favorito TRUE))
+	(modify ?pref (generos-favoritos $?respuesta))
+)
+
 (defrule MAIN::initialRule "Regla inicial"
 	(declare (salience 10))
 	=>
@@ -2120,18 +2145,17 @@
 ;;Recopilacion de datos de entrada --------------------------------------------------------------------
 
 (defrule recopilacion-grupo::establecer-tamanyo "Establece el tamanyo del grupo"
-	?g <- (datos_grupo (descripcion ?descripcion))
+	(not (datos_grupo))
 	=>
-	(bind ?des (pregunta-opciones2 "¿De que tamanyo es el grupo?" Individuo Pareja Grupo pequeno (3-12) Grupo mediano (13-25) Grupo grande (+25) Familia))
-	(modify ?g (descripcion ?des))
-)	
+	(bind ?d (pregunta-numerica "¿De cuantos visitantes esta formado el grupo? " 1 100))
+    (if (= ?d 1) then (bind ?descripcion "Individual"))
+    (if (= ?d 2) then (bind ?descripcion "Pareja"))
+    (if (and(> ?d 2) (< ?d 13)) then (bind ?descripcion "Grupo pequeno (3-12)"))
+    (if (and(> ?d 12) (< ?d 26)) then (bind ?descripcion"Grupo mediano (13-25)"))
+    (if (> ?d 25) then (bind ?descripcion "Grupo grande (+25)"))
+	(assert (datos_grupo (descripcion ?descripcion)))
+)
 
-;(defrule recopilacion-grupo::establecer-tamanyo "Establece el tamanyo del grupo"
-;	(not (datos_grupo))
-;	=>
-;	(bind ?descripcion (pregunta-datos "¿De cuantos visitantes esta formado el grupo? "))
-;	(assert (datos_grupo (descripcion ?descripcion)))
-;)
 
 (defrule recopilacion-grupo::establecer-edad "Establece la edad media del grupo"
 	?g <- (datos_grupo (edad ?edad))
@@ -2153,9 +2177,17 @@
 	?g <- (datos_grupo (horasdia ?horasdia))
     (test (< ?horasdia 0))
 	=>
-	(bind ?horasdia (pregunta-numerica "¿Cuanto tiempo dedicara diariamente a visitar el museo?" 1 24))
+	(bind ?horasdia (pregunta-numerica "¿Cuantas horas dedicara diariamente a visitar el museo?" 1 24))
 	(modify ?g (horasdia ?horasdia))
 )
+
+(deffacts recopilacion-prefs::hechos-iniciales "Establece hechos para poder recopilar informacion"
+	(autores_fav ask)
+    (tematicas_obras ask)
+    (estilos_fav ask)
+	(epocas_fav ask)
+)
+
 
 
 

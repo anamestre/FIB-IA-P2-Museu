@@ -8,7 +8,7 @@ PREGUNTES INICIALS:
 
 4. ¿Cuánto tiempo dedicará diariamente a visitar el museo?
 
-3. ¿Qué preferencia tiene respecto a autores?
+5. ¿Qué preferencia tiene respecto a autores?
 
 	1) Abraham Bloemaert
 	2) Adrien Cronenburch
@@ -46,7 +46,7 @@ PREGUNTES INICIALS:
 
 	x) Indiferente.
 
-4. ¿Qué preferencia tiene respecto a la temática de una obra?
+6. ¿Qué preferencia tiene respecto a la temática de una obra?
 
 	a) Religión.
 	b) Retrato.
@@ -64,7 +64,7 @@ PREGUNTES INICIALS:
 	x) Indiferente.
 
 
-5. ¿Qué preferencia tiene respecto a estilos de cuadros?
+7. ¿Qué preferencia tiene respecto a estilos de cuadros?
 
 	a) Románico.
 	b) Manierismo.
@@ -87,7 +87,7 @@ PREGUNTES INICIALS:
 
 	x) Indiferente.
 
-6. ¿Qué preferencia tiene respecto a épocas?
+8. ¿Qué preferencia tiene respecto a épocas?
 	
 	a) Románico.
 	b) Renacimiento.
