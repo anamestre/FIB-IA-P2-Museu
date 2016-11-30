@@ -2105,30 +2105,6 @@
     ?lista
 )
 
-(defrule recopilacion-prefs::establecer-genero-favorito "Establece el genero favorito del usuario"
-	?hecho <- (genero-favorito choose)
-	?pref <- (preferencias)
-	=>
-	(bind $?obj-generos (find-all-instances ((?inst Genero)) TRUE))
-	(bind $?nom-generos (create$ ))
-	(loop-for-count (?i 1 (length$ $?obj-generos)) do
-		(bind ?curr-obj (nth$ ?i ?obj-generos))
-		(bind ?curr-nom (send ?curr-obj get-genero))
-		(bind $?nom-generos(insert$ $?nom-generos (+ (length$ $?nom-generos) 1) ?curr-nom))
-	)
-	(bind ?escogido (pregunta-multi "Escoja sus géneros favoritos: " $?nom-generos))
-	
-	(bind $?respuesta (create$ ))
-	(loop-for-count (?i 1 (length$ ?escogido)) do
-		(bind ?curr-index (nth$ ?i ?escogido))
-		(bind ?curr-gen (nth$ ?curr-index ?obj-generos))
-		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-gen))
-	)
-	
-	(retract ?hecho)
-	(assert (genero-favorito TRUE))
-	(modify ?pref (generos-favoritos $?respuesta))
-)
 
 (defrule MAIN::initialRule "Regla inicial"
 	(declare (salience 10))
@@ -2181,13 +2157,36 @@
 	(modify ?g (horasdia ?horasdia))
 )
 
-(deffacts recopilacion-prefs::hechos-iniciales "Establece hechos para poder recopilar informacion"
+(deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"
 	(autores_fav ask)
     (tematicas_obras ask)
     (estilos_fav ask)
 	(epocas_fav ask)
 )
 
-
+(defrule recopilacion-preferencias::establecer-pintores-favoritos "Establece los pintores favoritos del usuario"
+	?hecho <- (autores_fav choose)
+	?pref <- (preferencias)
+	=>
+	(bind $?obj-pintores (find-all-instances ((?inst Pintor)) TRUE))
+	(bind $?nom-pintores (create$ ))
+	(loop-for-count (?i 1 (length$ $?obj-pintores)) do
+		(bind ?curr-obj (nth$ ?i ?obj-pintores))
+		(bind ?curr-nom (send ?curr-obj get-genero))
+		(bind $?nom-pintores(insert$ $?nom-pintores (+ (length$ $?nom-pintores) 1) ?curr-nom))
+	)
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus pintores favoritos: " $?nom-pintores))
+	
+	(bind $?respuesta (create$ ))
+	(loop-for-count (?i 1 (length$ ?escogido)) do
+		(bind ?curr-index (nth$ ?i ?escogido))
+		(bind ?curr-autor (nth$ ?curr-index ?obj-pintores))
+		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-autor))
+	)
+	
+	(retract ?hecho)
+	(assert (autores_fav TRUE))
+	(modify ?pref (autores_favoritos $?respuesta))
+)
 
 
