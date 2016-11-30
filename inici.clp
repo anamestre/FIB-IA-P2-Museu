@@ -2038,10 +2038,10 @@
 
 ;;; Funcion para hacer una pregunta numerica-univalor
 (deffunction MAIN::pregunta-numerica (?pregunta ?rangini ?rangfi)
-	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
+	(format t "%s (De %d hasta %d) " ?pregunta ?rangini ?rangfi)
 	(bind ?respuesta (read))
 	(while (not(and(>= ?respuesta ?rangini)(<= ?respuesta ?rangfi))) do
-		(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
+		(format t "%s (De %d hasta %d) " ?pregunta ?rangini ?rangfi)
 		(bind ?respuesta (read))
 	)
 	?respuesta
@@ -2157,6 +2157,8 @@
 	(modify ?g (horasdia ?horasdia))
 )
 
+;;; A PARTIR DE AQUI DIOS SABE LO QUE OCURRE
+
 (deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"
 	(autores_fav ask)
     (tematicas_obras ask)
@@ -2172,11 +2174,11 @@
 	(bind $?nom-pintores (create$ ))
 	(loop-for-count (?i 1 (length$ $?obj-pintores)) do
 		(bind ?curr-obj (nth$ ?i ?obj-pintores))
-		(bind ?curr-nom (send ?curr-obj get-genero))
+		(bind ?curr-nom (send ?curr-obj get-pintor))
 		(bind $?nom-pintores(insert$ $?nom-pintores (+ (length$ $?nom-pintores) 1) ?curr-nom))
 	)
 	(bind ?escogido (pregunta-multirespuesta "Escoja sus pintores favoritos: " $?nom-pintores))
-	
+
 	(bind $?respuesta (create$ ))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
