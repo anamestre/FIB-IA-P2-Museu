@@ -4,6 +4,10 @@ PREGUNTES INICIALS:
 
 2. ¿Cuál es la media de edad del grupo?
 
+3. ¿Durante cuántos días realizará la visita?
+
+4. ¿Cuánto tiempo dedicará diariamente a visitar el museo?
+
 3. ¿Qué preferencia tiene respecto a autores?
 
 	1) Abraham Bloemaert

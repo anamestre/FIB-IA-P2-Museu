@@ -34,10 +34,6 @@
 ;+		(allowed-classes Epoca)
 ;+		(inverse-slot Pintores_epoca)
 		(create-accessor read-write))
-	(single-slot Rellev%C3%A0ncia
-		(type STRING)
-;+		(cardinality 0 1)
-		(create-accessor read-write))
 	(single-slot Titulo
 		(type STRING)
 ;+		(cardinality 0 1)
@@ -1965,19 +1961,40 @@
 	(Titulo "El beso")))
 
 
-;;; Declaracion de modulos ----------------------------
+;;; Declaracion de MODULOS!!!! ----------------------------
 
 ;;; Modulo principal de utilidades
 (defmodule MAIN (export ?ALL))
 
-;;; Modulo de recopilacion de los datos del usuario
+;;; Modulo de recopilacion de los datos del grupo + preferencias
 (defmodule recopilacion-grupo
 	(import MAIN ?ALL)
 	(export ?ALL)
 )
 
+(defmodule recopilacion-preferencias
+	(import MAIN ?ALL)
+	(import recopilacion-grupo deftemplate ?ALL)
+	(export ?ALL)
+)
 
-;; DEBE HABER MAS MODULOS (SOLO ESTE PARA RECOGER DATOS PERO HAY MAS!!!!!!!!!!!!!!!!!!!!!!!!
+(defmodule procesado-datos
+	(import MAIN ?ALL)
+	(import recopilacion-grupo deftemplate ?ALL)
+	(import recopilacion-preferencias deftemplate ?ALL)
+	(export ?ALL)
+)
+
+(defmodule generacion_soluciones
+	(import MAIN ?ALL)
+	(export ?ALL)
+)
+
+(defmodule resultados_al_grupo
+	(import MAIN ?ALL)
+	(export ?ALL)
+)
+
 ;;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
 
@@ -1986,19 +2003,21 @@
 ;;; Declaracion de templates --------------------------
 
 ;;; Template para los datos del grupo
+
 (deftemplate MAIN::datos_grupo
-	(slot nombre (type STRING))
-	(slot sexo (type SYMBOL) (default desconocido))
-	(slot edad (type INTEGER) (default -1))
-	(slot familia (type SYMBOL) (default desconocido))
+	(slot descripcion (type STRING)) ;tamanyo del grupo
+	(slot nivel (type INTEGER)(default -1)) ;conocimiento
+	(slot edad (type INTEGER)(default -1)) ;edad general del grupo
+    (slot dias (type INTEGER)(default -1)) ;nº dias en visitar el museo
+    (slot horasdia (type INTEGER)(default -1)) ;nº horas/dia
 )
 
 ;;; Template para las preferencias del usuario
 (deftemplate MAIN::preferencias_grupo
-	(multislot generos-favoritos (type INSTANCE))
-	(multislot tematicas-favoritas (type INSTANCE))
-	(multislot nacionalidades (type INSTANCE))
-	(multislot idiomas (type INSTANCE))
+	(multislot autores_favoritos (type INSTANCE))
+	(multislot tematicas_obras_fav (type INSTANCE))
+	(multislot estilos_favoritos (type INSTANCE))
+	(multislot epocas_favoritas (type INSTANCE))
 )
 
 ;;; Template para una lista de recomendaciones
@@ -2006,25 +2025,137 @@
 	(multislot recomendaciones (type INSTANCE))
 )
 
+;;; Funcion para hacer una pregunta no-numerica-univalor
+(deffunction pregunta-datos (?pregunta)
+    (format t "%s " ?pregunta)
+	(bind ?respuesta (read))
+	(while (not (lexemep ?respuesta)) do
+		(format t "%s " ?pregunta)
+		(bind ?respuesta (read))
+    )
+	?respuesta
+)
 
+;;; Funcion para hacer una pregunta numerica-univalor
+(deffunction MAIN::pregunta-numerica (?pregunta ?rangini ?rangfi)
+	(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
+	(bind ?respuesta (read))
+	(while (not(and(>= ?respuesta ?rangini)(<= ?respuesta ?rangfi))) do
+		(format t "%s [%d, %d] " ?pregunta ?rangini ?rangfi)
+		(bind ?respuesta (read))
+	)
+	?respuesta
+)
+
+
+;;; Funcion para hacer pregunta con muchas opciones
+(deffunction MAIN::pregunta-opciones (?pregunta $?valores-posibles)
+    (bind ?linea (format nil "%s" ?pregunta))
+    (printout t ?linea crlf)
+    (progn$ (?var ?valores-posibles) 
+            (bind ?linea (format nil "  %d. %s" ?var-index ?var))
+            (printout t ?linea crlf)
+    )
+    (bind ?respuesta (pregunta-numerica "Escoge una opcion:" 1 (length$ ?valores-posibles)))
+	?respuesta
+)
+
+;;; Funcion para hacer una pregunta general con una serie de respuestas admitidas
+(deffunction MAIN::pregunta-opciones2 (?question $?allowed-values)
+   (format t "%s "?question)
+   (progn$ (?curr-value $?allowed-values)
+		(format t "[%s]" ?curr-value)
+	)
+   (printout t ": ")
+   (bind ?answer (read))
+   (if (lexemep ?answer) 
+       then (bind ?answer (lowcase ?answer)))
+   (while (not (member ?answer ?allowed-values)) do
+      (format t "%s "?question)
+	  (progn$ (?curr-value $?allowed-values)
+		(format t "[%s]" ?curr-value)
+	  )
+	  (printout t ": ")
+      (bind ?answer (read))
+      (if (lexemep ?answer) 
+          then (bind ?answer (lowcase ?answer))))
+   ?answer
+)
+
+;;; Funcion para hacer una pregunta multi-respuesta con indices
+(deffunction pregunta-multirespuesta (?pregunta $?valores-posibles)
+    (bind ?linea (format nil "%s" ?pregunta))
+    (printout t ?linea crlf)
+    (progn$ (?var ?valores-posibles) 
+            (bind ?linea (format nil "  %d. %s" ?var-index ?var))
+            (printout t ?linea crlf)
+    )
+    (format t "%s" "Indica los números referentes a los pintores separados por un espacio: ")
+    (bind ?resp (readline))
+    (bind ?numeros (str-explode ?resp))
+    (bind $?lista (create$ ))
+    (progn$ (?var ?numeros) 
+        (if (and (integerp ?var) (and (>= ?var 1) (<= ?var (length$ ?valores-posibles))))
+            then 
+                (if (not (member$ ?var ?lista))
+                    then (bind ?lista (insert$ ?lista (+ (length$ ?lista) 1) ?var))
+                )
+        ) 
+    )
+    ?lista
+)
 
 (defrule MAIN::initialRule "Regla inicial"
 	(declare (salience 10))
 	=>
-	(printout t "╔════════════════════════════════════════════════════════╗" crlf)
-  	(printout t "║         Personalización de visitas a un museo          ║" crlf)
-	(printout t "╚════════════════════════════════════════════════════════╝" crlf)
+	(printout t "----------------------------------------------------------" crlf)
+  	(printout t "          Personalizacion de visitas a un museo           " crlf)
+	(printout t "----------------------------------------------------------" crlf)
   	(printout t crlf)  	
-	(printout t "¡Bienvenido! A continuación se le formularán una serie de preguntas para poder recomendarle una visita adecuada a sus preferencias." crlf)
+	(printout t "¡Bienvenido! A continuacion se le formularan una serie de preguntas para poder recomendarle una visita adecuada a sus preferencias." crlf)
 	(printout t crlf)
 	(focus recopilacion-grupo)
 )
 
 ;;Recopilacion de datos de entrada --------------------------------------------------------------------
 
-(defrule recopilacion-grupo::establecer-tamanyo "Establece el nombre de usuario, es la primera pregunta"
-	(not (Tamanyo))
+(defrule recopilacion-grupo::establecer-tamanyo "Establece el tamanyo del grupo"
+	?g <- (datos_grupo (descripcion ?descripcion))
 	=>
-	(bind ?Descripcion (pregunta-general "¿Cómo se llama? "))
-	(assert (Tamanyo (Tamanyo ?Tamanyo)))
+	(bind ?des (pregunta-opciones2 "¿De que tamanyo es el grupo?" Individuo Pareja Grupo pequeno (3-12) Grupo mediano (13-25) Grupo grande (+25) Familia))
+	(modify ?g (descripcion ?des))
+)	
+
+;(defrule recopilacion-grupo::establecer-tamanyo "Establece el tamanyo del grupo"
+;	(not (datos_grupo))
+;	=>
+;	(bind ?descripcion (pregunta-datos "¿De cuantos visitantes esta formado el grupo? "))
+;	(assert (datos_grupo (descripcion ?descripcion)))
+;)
+
+(defrule recopilacion-grupo::establecer-edad "Establece la edad media del grupo"
+	?g <- (datos_grupo (edad ?edad))
+	(test (< ?edad 0))
+	=>
+	(bind ?edad (pregunta-numerica "¿Cual es la media de edad del grupo? " 1 110)) 
+	(modify ?g (edad ?edad))
 )
+
+(defrule recopilacion-grupo::establecer-dias "Establece el nº dias de la visita"
+	?g <- (datos_grupo (dias ?dias))
+    (test (< ?dias 0))
+	=>
+	(bind ?dias (pregunta-numerica "¿Durante cuantos dias realizara la visita?" 1 365))
+	(modify ?g (dias ?dias))
+)
+
+(defrule recopilacion-grupo::establecer-tiempo "Establece las horas diarias"
+	?g <- (datos_grupo (horasdia ?horasdia))
+    (test (< ?horasdia 0))
+	=>
+	(bind ?horasdia (pregunta-numerica "¿Cuanto tiempo dedicara diariamente a visitar el museo?" 1 24))
+	(modify ?g (horasdia ?horasdia))
+)
+
+
+
