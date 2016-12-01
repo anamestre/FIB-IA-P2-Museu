@@ -2090,18 +2090,19 @@
             (bind ?linea (format nil "  %d. %s" ?var-index ?var))
             (printout t ?linea crlf)
     )
-    (format t "%s" "Indica los números referentes a los pintores separados por un espacio: ")
+    (format t "%s" "Indica los numeros referentes a los pintores separados por un espacio: ")
     (bind ?resp (readline))
     (bind ?numeros (str-explode ?resp))
     (bind $?lista (create$ ))
     (progn$ (?var ?numeros) 
-        (if (and (integerp ?var) (and (>= ?var 1) (<= ?var (length$ ?valores-posibles))))
+        (if (and (integerp ?var) (and (>= ?var 0) (<= ?var (length$ ?valores-posibles))))
             then 
                 (if (not (member$ ?var ?lista))
                     then (bind ?lista (insert$ ?lista (+ (length$ ?lista) 1) ?var))
                 )
         ) 
     )
+    (if (member$ 0 ?lista) then (bind $?lista (create$ )))
     ?lista
 )
 
@@ -2109,11 +2110,11 @@
 (defrule MAIN::initialRule "Regla inicial"
 	(declare (salience 10))
 	=>
-	(printout t "----------------------------------------------------------" crlf)
-  	(printout t "          Personalizacion de visitas a un museo           " crlf)
-	(printout t "----------------------------------------------------------" crlf)
+	(printout t"----------------------------------------------------------" crlf)
+  	(printout t"          Personalizacion de visitas a un museo           " crlf)
+	(printout t"----------------------------------------------------------" crlf)
   	(printout t crlf)  	
-	(printout t "¡Bienvenido! A continuacion se le formularan una serie de preguntas para poder recomendarle una visita adecuada a sus preferencias." crlf)
+	(printout t"¡Bienvenido! A continuacion se le formularan una serie de preguntas para poder recomendarle una visita adecuada a sus preferencias." crlf)
 	(printout t crlf)
 	(focus recopilacion-grupo)
 )
@@ -2166,7 +2167,7 @@
 	=>
 	(focus recopilacion-preferencias)
 )
-;;; A PARTIR DE AQUI DIOS SABE LO QUE OCURRE
+;;; A PARTIR DE AQUI DIOS SABE LO QUE OCURRE (Y NOSOTROS TAMBIEN)
 
 (deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"      
     (printout t "2----------" crlf)
@@ -2190,7 +2191,7 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre))
 		(bind $?nom-pintores(insert$ $?nom-pintores (+ (length$ $?nom-pintores) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-multirespuesta "Escoja sus pintores favoritos: " $?nom-pintores))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus pintores favoritos(o 0 en el caso contrario): " $?nom-pintores))
 
 	(bind $?respuesta (create$ ))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
@@ -2204,11 +2205,10 @@
 	(modify ?pref (autores_favoritos $?respuesta))
 )
 
-(defrule recopilacion-preferencias::establecer-tematicas-favorias "Establece las tematicas favoritas del grupo"
+(defrule recopilacion-preferencias::establecer-tematicas-favorias "Establece las tematicas favoritas del grupo "
     ?hecho <- (tematicas_obras ask)
 	?pref <- (preferencias)
 	=>
-    (printout t "3---------------" crlf)
 	(bind $?obj-tematicas (find-all-instances ((?inst Tematica)) TRUE))
 	(bind $?nom-tematicas (create$ ))
 	(loop-for-count (?i 1 (length$ $?obj-tematicas)) do
@@ -2216,7 +2216,7 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre_tematica))
 		(bind $?nom-tematicas(insert$ $?nom-tematicas (+ (length$ $?nom-tematicas) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-multirespuesta "Escoja sus tematicas favoritas: " $?nom-tematicas))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus tematicas favoritas(o 0 en el caso contrario): " $?nom-tematicas))
 
 	(bind $?respuesta (create$ ))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
@@ -2234,7 +2234,6 @@
     ?hecho <- (estilos_fav ask)
 	?pref <- (preferencias)
 	=>
-    (printout t "3---------------" crlf)
 	(bind $?obj-estilos (find-all-instances ((?inst Estilo)) TRUE))
 	(bind $?nom-estilos (create$ ))
 	(loop-for-count (?i 1 (length$ $?obj-estilos)) do
@@ -2242,7 +2241,7 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre_estilo))
 		(bind $?nom-estilos(insert$ $?nom-estilos (+ (length$ $?nom-estilos) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-multirespuesta "Escoja sus estilos favoritos: " $?nom-estilos))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus estilos favoritos(o 0 en el caso contrario): " $?nom-estilos))
 
 	(bind $?respuesta (create$ ))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
@@ -2260,7 +2259,6 @@
     ?hecho <- (epocas_fav ask)
 	?pref <- (preferencias)
 	=>
-    (printout t "3---------------" crlf)
 	(bind $?obj-epocas (find-all-instances ((?inst Epoca)) TRUE))
 	(bind $?nom-epocas (create$ ))
 	(loop-for-count (?i 1 (length$ $?obj-epocas)) do
@@ -2268,7 +2266,7 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre_epoca))
 		(bind $?nom-epocas(insert$ $?nom-epocas (+ (length$ $?nom-epocas) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-multirespuesta "Escoja sus epocas favoritas: " $?nom-epocas))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus epocas favoritas(o 0 en el caso contrario): " $?nom-epocas))
 
 	(bind $?respuesta (create$ ))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
