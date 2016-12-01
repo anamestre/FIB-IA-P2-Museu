@@ -2178,7 +2178,7 @@
     (preferencias )
 )
 
-(defrule recopilacion-preferencias::establecer-pintores-favoritos "Establece los pintores favoritos del usuario"
+(defrule recopilacion-preferencias::establecer-pintores-favoritos "Establece los pintores favoritos del grupo"
     ?hecho <- (autores_fav ask)
 	?pref <- (preferencias)
 	=>
@@ -2203,5 +2203,84 @@
 	(assert (autores_fav TRUE))
 	(modify ?pref (autores_favoritos $?respuesta))
 )
+
+(defrule recopilacion-preferencias::establecer-tematicas-favorias "Establece las tematicas favoritas del grupo"
+    ?hecho <- (tematicas_obras ask)
+	?pref <- (preferencias)
+	=>
+    (printout t "3---------------" crlf)
+	(bind $?obj-tematicas (find-all-instances ((?inst Tematica)) TRUE))
+	(bind $?nom-tematicas (create$ ))
+	(loop-for-count (?i 1 (length$ $?obj-tematicas)) do
+		(bind ?curr-obj (nth$ ?i ?obj-tematicas))
+		(bind ?curr-nom (send ?curr-obj get-Nombre_tematica))
+		(bind $?nom-tematicas(insert$ $?nom-tematicas (+ (length$ $?nom-tematicas) 1) ?curr-nom))
+	)
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus tematicas favoritas: " $?nom-tematicas))
+
+	(bind $?respuesta (create$ ))
+	(loop-for-count (?i 1 (length$ ?escogido)) do
+		(bind ?curr-index (nth$ ?i ?escogido))
+		(bind ?curr-tematica (nth$ ?curr-index ?obj-tematicas))
+		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-tematica))
+	)
+	
+	(retract ?hecho)
+	(assert (tematicas_obras TRUE))
+	(modify ?pref (tematicas_obras_fav $?respuesta))
+)
+
+(defrule recopilacion-preferencias::establecer-estilos-favoritos "Establece los estilos favoritos del grupo"
+    ?hecho <- (estilos_fav ask)
+	?pref <- (preferencias)
+	=>
+    (printout t "3---------------" crlf)
+	(bind $?obj-estilos (find-all-instances ((?inst Estilo)) TRUE))
+	(bind $?nom-estilos (create$ ))
+	(loop-for-count (?i 1 (length$ $?obj-estilos)) do
+		(bind ?curr-obj (nth$ ?i ?obj-estilos))
+		(bind ?curr-nom (send ?curr-obj get-Nombre_estilo))
+		(bind $?nom-estilos(insert$ $?nom-estilos (+ (length$ $?nom-estilos) 1) ?curr-nom))
+	)
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus estilos favoritos: " $?nom-estilos))
+
+	(bind $?respuesta (create$ ))
+	(loop-for-count (?i 1 (length$ ?escogido)) do
+		(bind ?curr-index (nth$ ?i ?escogido))
+		(bind ?curr-estilos (nth$ ?curr-index ?obj-estilos))
+		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-estilos))
+	)
+	
+	(retract ?hecho)
+	(assert (estilos_fav TRUE))
+	(modify ?pref (estilos_favoritos $?respuesta))
+)
+
+(defrule recopilacion-preferencias::establecer-epocas-favoritas "Establece las epocas favoritas del grupo"
+    ?hecho <- (epocas_fav ask)
+	?pref <- (preferencias)
+	=>
+    (printout t "3---------------" crlf)
+	(bind $?obj-epocas (find-all-instances ((?inst Epoca)) TRUE))
+	(bind $?nom-epocas (create$ ))
+	(loop-for-count (?i 1 (length$ $?obj-epocas)) do
+		(bind ?curr-obj (nth$ ?i ?obj-epocas))
+		(bind ?curr-nom (send ?curr-obj get-Nombre_epoca))
+		(bind $?nom-epocas(insert$ $?nom-epocas (+ (length$ $?nom-epocas) 1) ?curr-nom))
+	)
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus epocas favoritas: " $?nom-epocas))
+
+	(bind $?respuesta (create$ ))
+	(loop-for-count (?i 1 (length$ ?escogido)) do
+		(bind ?curr-index (nth$ ?i ?escogido))
+		(bind ?curr-epocas (nth$ ?curr-index ?obj-epocas))
+		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-epocas))
+	)
+	
+	(retract ?hecho)
+	(assert (epocas_fav TRUE))
+	(modify ?pref (epocas_favoritas $?respuesta))
+)
+
 
 
