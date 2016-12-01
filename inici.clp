@@ -2005,7 +2005,7 @@
 ;;; Template para los datos del grupo
 
 (deftemplate MAIN::datos_grupo
-	(slot descripcion (type STRING)) ;tamanyo del grupo
+	(slot descripcion (type STRING) (default "desc")) ;tamanyo del grupo
 	(slot nivel (type INTEGER)(default -1)) ;conocimiento
 	(slot edad (type INTEGER)(default -1)) ;edad general del grupo
     (slot dias (type INTEGER)(default -1)) ;nº dias en visitar el museo
@@ -2157,24 +2157,37 @@
 	(modify ?g (horasdia ?horasdia))
 )
 
+(defrule recopilacion-grupo::pasar-a-preferencias "Pasa a la recopilacion de preferencias"
+	(declare (salience 10))
+	?g <- (datos_grupo (descripcion ~"desc")(edad ?e) (dias ?d) (horasdia ?horasdia))
+    (test (> ?e -1))
+    (test (> ?d -1))
+    (test (> ?horasdia -1))
+	=>
+	(focus recopilacion-preferencias)
+)
 ;;; A PARTIR DE AQUI DIOS SABE LO QUE OCURRE
 
-(deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"
-	(autores_fav ask)
+(deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"      
+    (printout t "2----------" crlf)
+    (autores_fav ask)
     (tematicas_obras ask)
     (estilos_fav ask)
 	(epocas_fav ask)
+    (conocimiento ask)
+    (preferencias )
 )
 
 (defrule recopilacion-preferencias::establecer-pintores-favoritos "Establece los pintores favoritos del usuario"
-	?hecho <- (autores_fav choose)
+    ?hecho <- (autores_fav ask)
 	?pref <- (preferencias)
 	=>
+    (printout t "3---------------" crlf)
 	(bind $?obj-pintores (find-all-instances ((?inst Pintor)) TRUE))
 	(bind $?nom-pintores (create$ ))
 	(loop-for-count (?i 1 (length$ $?obj-pintores)) do
 		(bind ?curr-obj (nth$ ?i ?obj-pintores))
-		(bind ?curr-nom (send ?curr-obj get-pintor))
+		(bind ?curr-nom (send ?curr-obj get-Nombre))
 		(bind $?nom-pintores(insert$ $?nom-pintores (+ (length$ $?nom-pintores) 1) ?curr-nom))
 	)
 	(bind ?escogido (pregunta-multirespuesta "Escoja sus pintores favoritos: " $?nom-pintores))
