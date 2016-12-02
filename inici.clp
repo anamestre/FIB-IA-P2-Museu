@@ -1960,6 +1960,8 @@
 	(Tematica_cuadro [Cuadres_Class19])
 	(Titulo "El beso")))
 
+;;Clases nuestras
+
 
 ;;; Declaracion de MODULOS!!!! ----------------------------
 
@@ -2010,6 +2012,7 @@
 	(slot edad (type INTEGER)(default -1)) ;edad general del grupo
     (slot dias (type INTEGER)(default -1)) ;nº dias en visitar el museo
     (slot horasdia (type INTEGER)(default -1)) ;nº horas/dia
+    (slot tiempo (type INTEGER)(default -1)) ;total de tiempo
 )
 
 ;;; Template para las preferencias del usuario
@@ -2023,6 +2026,19 @@
 ;;; Template para una lista de recomendaciones
 (deftemplate MAIN::lista_recomendaciones
 	(multislot recomendaciones (type INSTANCE))
+)
+
+;;; Cuadros ordenados
+(defclass ListaCuadros 
+	(is-a USER)
+	(role concrete)
+	(multislot cuadros
+		(type INSTANCE)
+		(create-accessor read-write))
+)
+
+(deftemplate MAIN::lista-cuadros-ordenada
+	(multislot cuadros (type INSTANCE))
 )
 
 ;;; Funcion para hacer una pregunta no-numerica-univalor
@@ -2081,6 +2097,13 @@
           then (bind ?answer (lowcase ?answer))))
    ?answer
 )
+;;; Funcion para hacer una pregunta de tipo si/no
+(deffunction MAIN::pregunta-si-no (?question)
+   (bind ?response (pregunta-opciones ?question si no))
+   (if (or (eq ?response si) (eq ?response s))
+       then TRUE 
+       else FALSE)
+)
 
 ;;; Funcion para hacer una pregunta multi-respuesta con indices
 (deffunction pregunta-multirespuesta (?pregunta $?valores-posibles)
@@ -2102,10 +2125,21 @@
                 )
         ) 
     )
-    (if (member$ 0 ?lista) then (bind $?lista (create$ )))
+    (if (member$ 0 ?lista) then (bind ?lista (create$ 0))    
     ?lista
 )
 
+;;; Funcion para hacer pregunta con indice de respuestas posibles
+(deffunction MAIN::pregunta-indice (?pregunta $?valores-posibles)
+    (bind ?linea (format nil "%s" ?pregunta))
+    (printout t ?linea crlf)
+    (progn$ (?var ?valores-posibles) 
+            (bind ?linea (format nil "  %d. %s" ?var-index ?var))
+            (printout t ?linea crlf)
+    )
+    (bind ?respuesta (pregunta-numerica "Escoge una opción:" 1 (length$ ?valores-posibles)))
+	?respuesta
+)
 
 (defrule MAIN::initialRule "Regla inicial"
 	(declare (salience 10))
@@ -2150,12 +2184,17 @@
 	(modify ?g (dias ?dias))
 )
 
-(defrule recopilacion-grupo::establecer-tiempo "Establece las horas diarias"
+(defrule recopilacion-grupo::establecer-tiempo "Establece las horas diarias y totales"
 	?g <- (datos_grupo (horasdia ?horasdia))
     (test (< ?horasdia 0))
 	=>
 	(bind ?horasdia (pregunta-numerica "¿Cuantas horas dedicara diariamente a visitar el museo?" 1 24))
 	(modify ?g (horasdia ?horasdia))
+    ?g <- (datos_grupo (tiempo ?tiempo))
+    (test (< ?tiempo 0))
+    =>
+    ?
+    (modify ?g (tiempo (bind ?tiempo (* ?horasdia ?dias))))
 )
 
 (defrule recopilacion-grupo::pasar-a-preferencias "Pasa a la recopilacion de preferencias"
@@ -2167,15 +2206,54 @@
 	=>
 	(focus recopilacion-preferencias)
 )
-;;; A PARTIR DE AQUI DIOS SABE LO QUE OCURRE (Y NOSOTROS TAMBIEN)
+
+(defrule recopilacion-grupo::preguntas-calcula-nivel "Pregunta al usuario sus conocimientos"
+    (bind ?puntuacio 0)
+    ?g <- (datos_grupo (edad ?edad))
+	=>
+	(bind ?respuesta (pregunta-si-no "Conoces 'El Grito' de Munch?"))
+	(retract ?hecho)
+	(if (eq ?respuesta TRUE)
+		then (bind ?puntuacio (+ 1))       
+	)
+
+    (bind ?respuesta (pregunta-si-no "Conoces 'Las Meninas' de Velazquez?"))
+	(retract ?hecho)
+	(if (eq ?respuesta TRUE)
+		then (bind ?puntuacio (+ 1))
+	)
+
+    (bind ?respuesta (pregunta-si-no "Conoces 'El nacimiento de Venus' de Botticelli?"))
+	(retract ?hecho)
+	(if (eq ?respuesta TRUE)
+		then (bind ?puntuacio (+ 1))
+	)
+    
+	(bind ?formatos (create$ "La Gioconda (la Mona Lisa)." "El jardin de las delicias." "La ultima cena."))
+	(bind ?respuesta (pregunta-multi "Cual de los siguientes titulos no pertenece a un cuadro de Leonardo da Vinci " ?formatos))
+	(if (= ?respuesta 2) then (bind ?puntuacio (+ 1)))
+    
+    (bind ?formatos (create$ "La persistencia de la memoria." "Alegoria de la poesia." "American Gothic." "Alegoria de la fe."))
+	(bind ?respuesta (pregunta-indice "Cual de estas obras es de Dali" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1)))
+    
+    (bind ?formatos (create$ "El Greco." "Alegoria de la poesia." "Francisco de Goya." "Diego Velazquez."))
+	(bind ?respuesta (pregunta-indice "¿Quien pinto el cuadro 'Las Hilanderas'?" ?formatos))
+	(if (= ?respuesta 3) then (bind ?puntuacio (+ 1)))
+
+    
+    (bind ?formatos (create$ "Klimt" "Tiziano" "Yanyez" "El Greco"))
+	(bind ?respuesta (pregunta-indice "¿Quien pinto 'El Beso'?" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1)))
+    
+    (modify ?g (nivel ?puntuacio))
+)  
 
 (deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"      
-    (printout t "2----------" crlf)
     (autores_fav ask)
     (tematicas_obras ask)
     (estilos_fav ask)
 	(epocas_fav ask)
-    (conocimiento ask)
     (preferencias )
 )
 
@@ -2183,7 +2261,6 @@
     ?hecho <- (autores_fav ask)
 	?pref <- (preferencias)
 	=>
-    (printout t "3---------------" crlf)
 	(bind $?obj-pintores (find-all-instances ((?inst Pintor)) TRUE))
 	(bind $?nom-pintores (create$ ))
 	(loop-for-count (?i 1 (length$ $?obj-pintores)) do
@@ -2202,6 +2279,7 @@
 	
 	(retract ?hecho)
 	(assert (autores_fav TRUE))
+    (if (= ?respuesta 0) then (autores_fav FALSE))
 	(modify ?pref (autores_favoritos $?respuesta))
 )
 
@@ -2227,6 +2305,7 @@
 	
 	(retract ?hecho)
 	(assert (tematicas_obras TRUE))
+    (if (= ?respuesta 0) then (tematicas_obras_fav FALSE))
 	(modify ?pref (tematicas_obras_fav $?respuesta))
 )
 
@@ -2252,6 +2331,7 @@
 	
 	(retract ?hecho)
 	(assert (estilos_fav TRUE))
+    (if (= ?respuesta 0) then (estilos_favoritos FALSE))
 	(modify ?pref (estilos_favoritos $?respuesta))
 )
 
@@ -2277,8 +2357,80 @@
 	
 	(retract ?hecho)
 	(assert (epocas_fav TRUE))
+    (if (= ?respuesta 0) then (epocas_favoritas FALSE))
 	(modify ?pref (epocas_favoritas $?respuesta))
 )
+
+(defrule recopilacion-preferencias::pasar_procesado_datos "Pasa al modulo de procesado de datos"
+	(declare (salience -1))
+	?h1 <- (autores_favoritos TRUE|FALSE)
+	?h2 <- (tematicas_obras_fav TRUE|FALSE)
+	?h3 <- (estilos_favoritos TRUE|FALSE)
+	?h4 <- (epocas_favoritas TRUE|FALSE)
+	=>
+	(printout t "Procesando los datos obtenidos..." crlf)
+	(focus procesado_datos)
+)
+
+;;; Modulo procesado de datos ---------------------------------------------------
+
+;;Se cogen los cuadros a partir de los 4 criterios
+
+;;Pintores favoritos primero
+
+(defrule procesado_datos::anadir-cuadros-ord-relev "Ordenar por relevancia."
+
+
+
+
+
+
+
+
+
+;;;;;;;;;;;;;;
+	?hecho <- (filtros Cuadro)
+	=>
+	(bind $?lista_des (find-all-instances ((?inst Cuadro)) TRUE))  
+    (bind ?lista_ord (create$))
+    (bind ?index 1)
+    (while (> (length ?lista) 0) do
+	    (bind ?maximo -1)
+	    (bind ?elemento nil)
+	    (progn$ (?curr-rec $?lista)
+		(bind ?curr-punt (send ?curr-rec get-Relevancia))
+		(if (> ?curr-punt ?maximo)
+			then 
+			(bind ?elemento ?curr-rec)
+		)
+        )
+        ;insertar en lista
+        (insert$ ?lista2 ?index (send ?elemento get-Cuadro))
+        ;borrarlo de la de instancias
+        (bind $?lista (delete-member$ $?lista ?curr-rec))
+        (bind ?index (+ 1))
+	 )
+)
+	
+    ;;;;;;;;;;;;;;
+
+(defrule generacion::crea-lista-ordenada "Se crea una lista ordenada de contenido"
+	(not (lista-rec-ordenada))
+	(lista-rec-desordenada (recomendaciones $?lista))
+	=>
+	;;; Hacemos una ordenacion buscando maximo a cada paso (lento per simple de implementar)
+	(bind $?resultado (create$ ))
+	(while (and (not (eq (length$ $?lista) 0)) (< (length$ $?resultado) 21))  do
+		(bind ?curr-rec (maximo-puntuacion $?lista))
+		(bind $?lista (delete-member$ $?lista ?curr-rec))
+		(bind $?resultado (insert$ $?resultado (+ (length$ $?resultado) 1) ?curr-rec))
+	)
+	(assert (lista-rec-ordenada (recomendaciones $?resultado)))
+)
+    
+
+
+
 
 
 
