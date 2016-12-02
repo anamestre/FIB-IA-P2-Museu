@@ -1,16 +1,16 @@
-# Museu
+﻿# Museu
 
 CONJUNT DE DADES: 
 - Base de dades de quadres.  <- Feta. 
 - Calcular complexitat.      <- Feta: funció que té en compte les dimensions dels quadres, mentre més quadrat i més gran, més complex és.
-- Calcular rellevància.      <- En procés.
-- Dissenyar el museu.
+- Calcular rellevància.      <- Feta.
+- Dissenyar el museu.	<- Feta.
 
 METODOLOGIA DE PROBLEMES: 
 - Proponer y aplicar.
 
 SUBPROBLEMES EN QUÈ HEM DIVIDIT L'ENUNCIAT:   
-- Obtenir la informació de la visita.
+- Obtenir la informació de la visita.	<- Feta.
 - Trobar els quadres adequats segons la informació + Calcular la duració.
 - Distribució de la visita: dies, hores... 
 
