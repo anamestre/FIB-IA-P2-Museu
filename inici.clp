@@ -2126,9 +2126,8 @@
                 )
         ) 
     )
-    (if (member$ 0 ?lista) then (bind ?lista (create$ 0))    
+    (if (member$ 0 ?lista) then (bind ?lista (create$ 0)))    
     ?lista
-    )
 )
 ;;; Funcion para hacer pregunta con indice de respuestas posibles
 (deffunction MAIN::pregunta-indice (?pregunta $?valores-posibles)
@@ -2247,13 +2246,13 @@
 	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
     
     (modify ?g (nivel ?puntuacio))
-    (printout t"----------------------------------------------------------" crlf)
+   ; (printout t"----------------------------------------------------------" crlf)
 )  
 
 (defrule recopilacion-grupo::pasar-a-preferencias "Pasa a la recopilacion de preferencias"
     (declare (salience 10))
-    (printout t"----------------------------------------------------------" crlf)
-    (focus recopilacion-preferencias)
+    ;(printout t"----------------------------------------------------------" crlf)
+    ;(focus recopilacion-preferencias)
 	
 	?g <- (datos_grupo (descripcion ~"desc")(edad ?e) (dias ?d) (horasdia ?horasdia) (nivel ?nivel) (tiempo ?tiempo))
     (test (> ?e -1))
@@ -2266,7 +2265,7 @@
 )
 
 (deffacts recopilacion-preferencias::hechos-iniciales "Establece hechos para poder recopilar informacion"      
-    (printout t"----------------------------------------------------------" crlf)
+   ; (printout t"----------------------------------------------------------" crlf)
     (autores_fav ask)
     (tematicas_obras ask)
     (estilos_fav ask)
@@ -2285,21 +2284,20 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre))
 		(bind $?nom-pintores(insert$ $?nom-pintores (+ (length$ $?nom-pintores) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-indice "Escoja sus pintores favoritos(o 0 en el caso contrario): " $?nom-pintores))
-
-	(bind $?respuesta (create$ ))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus pintores favoritos(o 0 en el caso contrario): " $?nom-pintores))
+	(assert (autores_fav TRUE))
+    (bind $?respuesta (create$ ))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
+        (if (= ?curr-index 0) then (assert (autores_fav FALSE)))
 		(bind ?curr-autor (nth$ ?curr-index ?obj-pintores))
 		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-autor))
 	)
 	
 	(retract ?hecho)
-	(assert (autores_fav TRUE))
-    (if (= ?escogido 0) then (assert (autores_fav TRUE))
-        else (assert (epocas_favoritas TRUE)))
-	(modify ?pref (autores_favoritos $?respuesta))
+    (modify ?pref (autores_favoritos $?respuesta))
 )
+
 
 (defrule recopilacion-preferencias::establecer-tematicas-favorias "Establece las tematicas favoritas del grupo "
     ?hecho <- (tematicas_obras ask)
@@ -2312,19 +2310,18 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre_tematica))
 		(bind $?nom-tematicas(insert$ $?nom-tematicas (+ (length$ $?nom-tematicas) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-indice "Escoja sus tematicas favoritas(o 0 en el caso contrario): " $?nom-tematicas))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus tematicas favoritas(o 0 en el caso contrario): " $?nom-tematicas))
 
 	(bind $?respuesta (create$ ))
+    (assert (epocas_favoritas TRUE))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
+        (if (= ?curr-index 0) then (assert (tematicas_obras_fav FALSE)))
 		(bind ?curr-tematica (nth$ ?curr-index ?obj-tematicas))
 		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-tematica))
 	)
 	
 	(retract ?hecho)
-	(assert (tematicas_obras TRUE))
-    (if (= ?escogido 0) then (assert (tematicas_obras_fav FALSE))
-        else (assert (epocas_favoritas TRUE)))
 	(modify ?pref (tematicas_obras_fav $?respuesta))
 )
 
@@ -2339,19 +2336,18 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre_estilo))
 		(bind $?nom-estilos(insert$ $?nom-estilos (+ (length$ $?nom-estilos) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-indice "Escoja sus estilos favoritos(o 0 en el caso contrario): " $?nom-estilos))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus estilos favoritos(o 0 en el caso contrario): " $?nom-estilos))
 
 	(bind $?respuesta (create$ ))
+    (assert (epocas_favoritas TRUE))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
+        (if (= ?curr-index 0) then (assert (estilos_favoritos FALSE)))
 		(bind ?curr-estilos (nth$ ?curr-index ?obj-estilos))
 		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-estilos))
 	)
 	
 	(retract ?hecho)
-	(assert (estilos_fav TRUE))
-    (if (= ?escogido 0) then (assert (estilos_favoritos FALSE))
-        else (assert (epocas_favoritas TRUE)))
 	(modify ?pref (estilos_favoritos $?respuesta))
 )
 
@@ -2366,19 +2362,18 @@
 		(bind ?curr-nom (send ?curr-obj get-Nombre_epoca))
 		(bind $?nom-epocas(insert$ $?nom-epocas (+ (length$ $?nom-epocas) 1) ?curr-nom))
 	)
-	(bind ?escogido (pregunta-indice "Escoja sus epocas favoritas(o 0 en el caso contrario): " $?nom-epocas))
+	(bind ?escogido (pregunta-multirespuesta "Escoja sus epocas favoritas(o 0 en el caso contrario): " $?nom-epocas))
 
 	(bind $?respuesta (create$ ))
+    (assert (epocas_fav TRUE))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
+        (if (= ?curr-index 0) then (assert (epocas_favoritas FALSE)))
 		(bind ?curr-epocas (nth$ ?curr-index ?obj-epocas))
 		(bind $?respuesta(insert$ $?respuesta (+ (length$ $?respuesta) 1) ?curr-epocas))
 	)
 	
-	(retract ?hecho)
-	(assert (epocas_fav TRUE))
-    (if (= ?escogido 0) then (assert (epocas_favoritas FALSE))
-        else (assert (epocas_favoritas TRUE)))
+	(retract ?hecho)   
 	(modify ?pref (epocas_favoritas $?respuesta))
 )
 
