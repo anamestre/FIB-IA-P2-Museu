@@ -1962,6 +1962,23 @@
 
 ;;Clases nuestras
 
+(defclass Recomendacion 
+	(is-a USER)
+	(role concrete)
+    (slot cuadro
+		(type INSTANCE)
+		(create-accessor read-write))
+	(slot relevancia
+		(type INTEGER)
+		(create-accessor read-write))
+	(slot complejidad
+		(type INTEGER)
+		(create-accessor read-write))   
+    (slot sala
+		(type INTEGER)
+		(create-accessor read-write))
+)
+
 
 ;;; Declaracion de MODULOS!!!! ----------------------------
 
@@ -2023,9 +2040,14 @@
 	(multislot epocas_favoritas (type INSTANCE))
 )
 
-;;; Template para una lista de recomendaciones
-(deftemplate MAIN::lista_recomendaciones
-	(multislot recomendaciones (type INSTANCE))
+;;; Template para una lista de recomendaciones sin orden
+(deftemplate MAIN::lista-cuadros-desordenada
+	(multislot cuadros_aux (type INSTANCE))
+)
+
+;;; Template para una lista de recomendaciones con orden
+(deftemplate MAIN::lista-cuadros-ordenada
+	(multislot cuadros (type INSTANCE))
 )
 
 ;;; Cuadros ordenados
@@ -2270,12 +2292,12 @@
     (tematicas_obras ask)
     (estilos_fav ask)
 	(epocas_fav ask)
-    (preferencias )
+    (preferencias_grupo )
 )
 
 (defrule recopilacion-preferencias::establecer-pintores-favoritos "Establece los pintores favoritos del grupo"
     ?hecho <- (autores_fav ask)
-	?pref <- (preferencias)
+	?pref <- (preferencias_grupo)
 	=>
 	(bind $?obj-pintores (find-all-instances ((?inst Pintor)) TRUE))
 	(bind $?nom-pintores (create$ ))
@@ -2301,7 +2323,7 @@
 
 (defrule recopilacion-preferencias::establecer-tematicas-favorias "Establece las tematicas favoritas del grupo "
     ?hecho <- (tematicas_obras ask)
-	?pref <- (preferencias)
+	?pref <- (preferencias_grupo)
 	=>
 	(bind $?obj-tematicas (find-all-instances ((?inst Tematica)) TRUE))
 	(bind $?nom-tematicas (create$ ))
@@ -2327,7 +2349,7 @@
 
 (defrule recopilacion-preferencias::establecer-estilos-favoritos "Establece los estilos favoritos del grupo"
     ?hecho <- (estilos_fav ask)
-	?pref <- (preferencias)
+	?pref <- (preferencias_grupo)
 	=>
 	(bind $?obj-estilos (find-all-instances ((?inst Estilo)) TRUE))
 	(bind $?nom-estilos (create$ ))
@@ -2353,7 +2375,7 @@
 
 (defrule recopilacion-preferencias::establecer-epocas-favoritas "Establece las epocas favoritas del grupo"
     ?hecho <- (epocas_fav ask)
-	?pref <- (preferencias)
+	?pref <- (preferencias_grupo)
 	=>
 	(bind $?obj-epocas (find-all-instances ((?inst Epoca)) TRUE))
 	(bind $?nom-epocas (create$ ))
@@ -2391,10 +2413,115 @@
 ;;; Modulo procesado de datos ---------------------------------------------------
 
 
+(defrule procesado::anadir-cuadros "Se añade todos los cuadros"
+	?hecho <- (formato Cuadro)
+	=>
+	(bind $?lista (find-all-instances ((?inst Cuadro)) TRUE))
+	(progn$ (?curr-con ?lista)
+		(make-instance (gensym) of Recomendacion (cuadro ?curr-con) 
+        (complejidad (send ?curr-con get-complejidad)) 
+        (puntuacion (send ?curr-con get-puntuacion)) (sala (send ?curr-con get-sala)))
+	)	
+	(retract ?hecho)
+)
+
+(defrule procesado::aux-autores "Crea hechos para poder procesar los autores favoritos"
+	(preferencias_grupo (autores-favoritos $?gen))
+	?hecho <- (autores-fav ?aux)
+	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
+	=>
+	(retract ?hecho)
+	(if (eq ?aux TRUE)then 
+		(progn$ (?curr-gen $?gen)
+			(assert (autores-fav ?curr-gen))
+		)
+	)
+)
+
+(defrule procesado::aux-tematicas "Crea hechos para poder procesar las tematicas favoritas"
+	(preferencias_grupo (tematicas_obras_fav $?gen))
+	?hecho <- (tematicas_obras ?aux)
+	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
+	=>
+	(retract ?hecho)
+	(if (eq ?aux TRUE)then 
+		(progn$ (?curr-gen $?gen)
+			(assert (tematicas_obras ?curr-gen))
+		)
+	)
+)
+
+(defrule procesado::aux-estilos "Crea hechos para poder procesar los estilos favoritos"
+	(preferencias_grupo (estilos_favoritos $?gen))
+	?hecho <- (estilos-fav ?aux)
+	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
+	=>
+	(retract ?hecho)
+	(if (eq ?aux TRUE)then 
+		(progn$ (?curr-gen $?gen)
+			(assert (estilos-fav ?curr-gen))
+		)
+	)
+)
+
+(defrule procesado::aux-autores "Crea hechos para poder procesar las espocas favoritas"
+	(preferencias_grupo (epocas-favoritas $?gen))
+	?hecho <- (epocas-fav ?aux)
+	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
+	=>
+	(retract ?hecho)
+	(if (eq ?aux TRUE)then 
+		(progn$ (?curr-gen $?gen)
+			(assert (epocas-fav ?curr-gen))
+		)
+	)
+)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;APLICAMOS LOS FILTROS DE LAS PREGUNTAS
+
+
+
+
+(defrule procesado::valorar-edad "Se quitan los cuadros que no cumplen las preguntas"
+	(datos_grupo (edad ?e))
+	?rec <- (object (is-a Recomendacion) (cuadro ?recom))
+	?cont <-(object (is-a Cuadro) (Pintado_por ?pintado) (Tematica_cuadro ?tematica) (Estilo_cuadro ?estilo)
+    (Epoca_cuadro ?epoca))
+    
+    
+
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(test (< ?e ?min-edad))
+	=>
+	(send ?rec delete)
+)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ;;Pintores favoritos primero
 
-(defrule procesado-datos::crea-lista-ordenada "Se crea una lista ordenada de instancias por relevancia"
-	?hecho <- (filtros Cuadro)
+(defrule procesado-datos::crea-lista-relev "Se crea una lista ordenada de instancias por relevancia"
+	;?hecho <- (filtros Cuadro)
+    
 	=>
 	(bind $?lista_des (find-all-instances ((?inst Cuadro)) TRUE))  
     (bind ?curr-rec 1)
@@ -2418,8 +2545,38 @@
         (bind ?index (+ 1 ?index))
 	 )
    ;   (printout t "Procesando los datos obtenidos3..." crlf)
-    (printout t (send ?lista_ord get-Relevancia) crlf)
+    ;(printout t (send ?lista_ord get-Relevancia) crlf)
 )
+
+(defrule procesado-datos::crea-lista-complex "Se crea una lista ordenada de instancias por relevancia"
+	;?hecho <- (filtros Cuadro)
+    
+	=>
+	(bind $?lista_des (find-all-instances ((?inst Cuadro)) TRUE))  
+    (bind ?curr-rec 1)
+    (bind ?lista_ord (create$))
+    (bind ?index 1)
+    (while (> (length ?lista) 0) do
+	    (bind ?maximo -1)
+	    (bind ?elemento nil)
+	    (progn$ (?curr-rec $?lista)
+		    (bind ?curr-punt (send ?curr-rec get-Complejidad))
+		    (if (> ?curr-punt ?maximo)
+			    then 
+			    (bind ?elemento ?curr-rec)
+		    )
+        )
+        ;insertar en lista
+       ; (insert$ ?lista2 ?index (send ?elemento get-Cuadro))
+        (bind $?lista (insert$ $?lista_ord (+ (length$ $?lista_ord) 1) ?curr-rec))
+        ;borrarlo de la de instancias
+        (bind $?lista (delete-member$ $?lista ?curr-rec))
+        (bind ?index (+ 1 ?index))
+    )
+   ;   (printout t "Procesando los datos obtenidos3..." crlf)
+   ; (printout t (send ?lista_ord get-Relevancia) crlf)
+)
+
 	
   
 
