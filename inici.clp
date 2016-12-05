@@ -2313,7 +2313,7 @@
 	(bind ?escogido (pregunta-multirespuesta "Escoja sus tematicas favoritas(o 0 en el caso contrario): " $?nom-tematicas))
 
 	(bind $?respuesta (create$ ))
-    (assert (epocas_favoritas TRUE))
+    (assert (tematicas_obras TRUE))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
         (if (= ?curr-index 0) then (assert (tematicas_obras_fav FALSE)))
@@ -2339,7 +2339,7 @@
 	(bind ?escogido (pregunta-multirespuesta "Escoja sus estilos favoritos(o 0 en el caso contrario): " $?nom-estilos))
 
 	(bind $?respuesta (create$ ))
-    (assert (epocas_favoritas TRUE))
+    (assert (estilos_fav TRUE))
 	(loop-for-count (?i 1 (length$ ?escogido)) do
 		(bind ?curr-index (nth$ ?i ?escogido))
         (if (= ?curr-index 0) then (assert (estilos_favoritos FALSE)))
@@ -2379,18 +2379,17 @@
 
 (defrule recopilacion-preferencias::pasar_procesado_datos "Pasa al modulo de procesado de datos"
 	(declare (salience -1))
-	?h1 <- (autores_favoritos TRUE|FALSE)
-	?h2 <- (tematicas_obras_fav TRUE|FALSE)
-	?h3 <- (estilos_favoritos TRUE|FALSE)
-	?h4 <- (epocas_favoritas TRUE|FALSE)
+	?h1 <- (autores_fav TRUE|FALSE)
+	?h2 <- (tematicas_obras TRUE|FALSE)
+	?h3 <- (estilos_fav TRUE|FALSE)
+	?h4 <- (epocas_fav TRUE|FALSE)
 	=>
 	(printout t "Procesando los datos obtenidos..." crlf)
-	(focus procesado_datos)
+	(focus procesado-datos)
 )
 
 ;;; Modulo procesado de datos ---------------------------------------------------
 
-;;Se cogen los cuadros a partir de los 4 criterios
 
 ;;Pintores favoritos primero
 
@@ -2418,6 +2417,8 @@
         (bind $?lista (delete-member$ $?lista ?curr-rec))
         (bind ?index (+ 1 ?index))
 	 )
+   ;   (printout t "Procesando los datos obtenidos3..." crlf)
+    (printout t (send ?lista_ord get-Relevancia) crlf)
 )
 	
   
