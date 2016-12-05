@@ -2413,32 +2413,32 @@
 ;;; Modulo procesado de datos ---------------------------------------------------
 
 
-(defrule procesado::anadir-cuadros "Se añade todos los cuadros"
+(defrule procesado-datos::anadir-cuadros "Se añade todos los cuadros"
 	?hecho <- (formato Cuadro)
 	=>
 	(bind $?lista (find-all-instances ((?inst Cuadro)) TRUE))
 	(progn$ (?curr-con ?lista)
 		(make-instance (gensym) of Recomendacion (cuadro ?curr-con) 
         (complejidad (send ?curr-con get-complejidad)) 
-        (puntuacion (send ?curr-con get-puntuacion)) (sala (send ?curr-con get-sala)))
+        (relevancia (send ?curr-con get-relevancia)) (sala (send ?curr-con get-sala)))
 	)	
 	(retract ?hecho)
 )
 
-(defrule procesado::aux-autores "Crea hechos para poder procesar los autores favoritos"
-	(preferencias_grupo (autores-favoritos $?gen))
-	?hecho <- (autores-fav ?aux)
+(defrule procesado-datos::aux-autores "Crea hechos para poder procesar los autores favoritos"
+	(preferencias_grupo (autores_favoritos $?gen))
+	?hecho <- (autores_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
 	(retract ?hecho)
 	(if (eq ?aux TRUE)then 
 		(progn$ (?curr-gen $?gen)
-			(assert (autores-fav ?curr-gen))
+			(assert (autores_fav ?curr-gen))
 		)
 	)
 )
 
-(defrule procesado::aux-tematicas "Crea hechos para poder procesar las tematicas favoritas"
+(defrule procesado-datos::aux-tematicas "Crea hechos para poder procesar las tematicas favoritas"
 	(preferencias_grupo (tematicas_obras_fav $?gen))
 	?hecho <- (tematicas_obras ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
@@ -2451,28 +2451,28 @@
 	)
 )
 
-(defrule procesado::aux-estilos "Crea hechos para poder procesar los estilos favoritos"
+(defrule procesado-datos::aux-estilos "Crea hechos para poder procesar los estilos favoritos"
 	(preferencias_grupo (estilos_favoritos $?gen))
-	?hecho <- (estilos-fav ?aux)
+	?hecho <- (estilos_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
 	(retract ?hecho)
 	(if (eq ?aux TRUE)then 
 		(progn$ (?curr-gen $?gen)
-			(assert (estilos-fav ?curr-gen))
+			(assert (estilos_fav ?curr-gen))
 		)
 	)
 )
 
-(defrule procesado::aux-autores "Crea hechos para poder procesar las espocas favoritas"
-	(preferencias_grupo (epocas-favoritas $?gen))
-	?hecho <- (epocas-fav ?aux)
+(defrule procesado-datos::aux-autores "Crea hechos para poder procesar las espocas favoritas"
+	(preferencias_grupo (epocas_favoritas $?gen))
+	?hecho <- (epocas_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
 	(retract ?hecho)
 	(if (eq ?aux TRUE)then 
 		(progn$ (?curr-gen $?gen)
-			(assert (epocas-fav ?curr-gen))
+			(assert (epocas_fav ?curr-gen))
 		)
 	)
 )
@@ -2480,18 +2480,17 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;APLICAMOS LOS FILTROS DE LAS PREGUNTAS
 
 
-
-
-(defrule procesado::valorar-edad "Se quitan los cuadros que no cumplen las preguntas"
-	(datos_grupo (edad ?e))
+(defrule procesado-datos::valorar-edad "Se quitan los cuadros que no cumplen las preguntas"
+	(preferencias_grupo (epocas_favoritas ?epf) (estilos_favoritos ?esf) 
+    (tematicas_obras_fav ?tof) (autores_favoritos ?af))
 	?rec <- (object (is-a Recomendacion) (cuadro ?recom))
 	?cont <-(object (is-a Cuadro) (Pintado_por ?pintado) (Tematica_cuadro ?tematica) (Estilo_cuadro ?estilo)
     (Epoca_cuadro ?epoca))
-    
-    
-
-	(test (eq (instance-name ?cont) (instance-name ?conta)))
-	(test (< ?e ?min-edad))
+    ;desigualdad que hay que cumplir (solo pasaran las contrarias a lo que queremos, por lo tanto las que se borran)
+    (test (not(= ?epf ?epoca)))
+    (test (not(= ?esf ?estilo)))
+    (test (not(= ?tof ?tematica)))
+    (test (not(= ?af ?pintado)))
 	=>
 	(send ?rec delete)
 )
@@ -2499,21 +2498,7 @@
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+;;PRUEBAAAAAAAAAAAS
 
 
 
