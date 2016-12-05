@@ -1977,6 +1977,10 @@
     (slot sala
 		(type INTEGER)
 		(create-accessor read-write))
+    (slot valoracion
+        (type INTEGER)
+        (default 0)
+        (create-accessor read-write))
 )
 
 
@@ -2482,7 +2486,7 @@
 
 (defrule procesado-datos::valorar-edad "Se quitan los cuadros que no cumplen las preguntas"
 	(preferencias_grupo (epocas_favoritas ?epf) (estilos_favoritos ?esf) 
-    (tematicas_obras_fav ?tof) (autores_favoritos ?af))
+        (tematicas_obras_fav ?tof) (autores_favoritos ?af))
 	?rec <- (object (is-a Recomendacion) (cuadro ?recom))
 	?cont <-(object (is-a Cuadro) (Pintado_por ?pintado) (Tematica_cuadro ?tematica) (Estilo_cuadro ?estilo)
     (Epoca_cuadro ?epoca))
@@ -2495,6 +2499,16 @@
 	(send ?rec delete)
 )
 
+(defrule procesado-datos::puntuar-epocas "Se puntuan las epocas que cumplen con las preferencias"
+    (preferencias_grupo (epocas_favoritas ?epf))
+    ?rec <- (object (is-a Recomendacion) (cuadro ?recom) (valoracion ?valor))
+    ?cont <- (object (is-a Cuadro) (Epoca_cuadro ?epoca))
+    (test (= ?epf ?epoca))
+    (test (= ?recom ?cont)) ;????
+    =>
+    (bind ?val (+ 10 ?valor)) ;;10 arbitrari
+    (send ?rec ?val)
+)
 
 
 
