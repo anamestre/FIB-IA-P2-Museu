@@ -2410,8 +2410,8 @@
 
 ;;; Modulo procesado de datos ---------------------------------------------------
 
-;;TODOS LOS CUADRO AÑADIDOS
-(defrule procesado-datos::anadir-cuadros "Se añaden todos los cuadros"
+;;TODOS LOS CUADRO ANADIDOS
+(defrule procesado-datos::anadir-cuadros "Se anaden todos los cuadros"
     (declare (salience 10))
 	=>
 	(bind $?lista (find-all-instances ((?inst Cuadro)) TRUE))

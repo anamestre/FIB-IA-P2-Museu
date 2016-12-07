@@ -1965,22 +1965,15 @@
 (defclass Recomendacion 
 	(is-a USER)
 	(role concrete)
-    (slot cuadro
+    (slot nombre_cuadro
 		(type INSTANCE)
 		(create-accessor read-write))
-	(slot relevancia
-		(type INTEGER)
-		(create-accessor read-write))
-	(slot complejidad
-		(type INTEGER)
-		(create-accessor read-write))   
-    (slot sala
-		(type INTEGER)
-		(create-accessor read-write))
-    (slot valoracion
+    (slot puntuacion
         (type INTEGER)
-        (default 0)
         (create-accessor read-write))
+    (multislot justificaciones
+		(type STRING)
+		(create-accessor read-write))
 )
 
 
@@ -2061,10 +2054,6 @@
 	(multislot cuadros
 		(type INSTANCE)
 		(create-accessor read-write))
-)
-
-(deftemplate MAIN::lista-cuadros-ordenada
-	(multislot cuadros (type INSTANCE))
 )
 
 
@@ -2239,34 +2228,30 @@
     (test( < ?nivel 0))
 	=>
     (bind ?puntuacio 0)
-	(bind ?respuesta (pregunta-si-no "Conoces 'El Grito' de Munch?"))
-	(if (eq ?respuesta TRUE)
-		then (bind ?puntuacio (+ 1 ?puntuacio))       
-	)
+    (bind ?formatos (create$ "Si" "No"))
+	(bind ?respuesta (pregunta-indice "Conoces 'El Grito' de Munch?" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
+   
+    (bind ?formatos (create$ "Si" "No"))
+	(bind ?respuesta (pregunta-indice "Conoces 'Las Meninas' de Velazquez?" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
 
-    (bind ?respuesta (pregunta-si-no "Conoces 'Las Meninas' de Velazquez?"))
-	(if (eq ?respuesta TRUE)
-		then (bind ?puntuacio (+ 1 ?puntuacio))
-	)
-
-    (bind ?respuesta (pregunta-si-no "Conoces 'El nacimiento de Venus' de Botticelli?"))
-	(if (eq ?respuesta TRUE)
-		then (bind ?puntuacio (+ 1 ?puntuacio))
-	)
+    (bind ?formatos (create$ "Si" "No"))
+	(bind ?respuesta (pregunta-indice "Conoces 'El nacimiento de Venus' de Boticelli" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
     
 	(bind ?formatos (create$ "La Gioconda (la Mona Lisa)." "El jardin de las delicias." "La ultima cena."))
 	(bind ?respuesta (pregunta-indice "Cual de los siguientes titulos no pertenece a un cuadro de Leonardo da Vinci " ?formatos))
 	(if (= ?respuesta 2) then (bind ?puntuacio (+ 1 ?puntuacio)))
-    
+
     (bind ?formatos (create$ "La persistencia de la memoria." "Alegoria de la poesia." "American Gothic." "Alegoria de la fe."))
 	(bind ?respuesta (pregunta-indice "Cual de estas obras es de Dali" ?formatos))
 	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
-    
-    (bind ?formatos (create$ "El Greco." "Alegoria de la poesia." "Francisco de Goya." "Diego Velazquez."))
+
+    (bind ?formatos (create$ "El Greco." "Francisco de Goya." "Diego Velazquez."))
 	(bind ?respuesta (pregunta-indice "¿Quien pinto el cuadro 'Las Hilanderas'?" ?formatos))
 	(if (= ?respuesta 3) then (bind ?puntuacio (+ 1 ?puntuacio)))
 
-    
     (bind ?formatos (create$ "Klimt" "Tiziano" "Yanyez" "El Greco"))
 	(bind ?respuesta (pregunta-indice "¿Quien pinto 'El Beso'?" ?formatos))
 	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
@@ -2468,7 +2453,7 @@
 	)
 )
 
-(defrule procesado-datos::aux-autores "Crea hechos para poder procesar las espocas favoritas"
+(defrule procesado-datos::aux-epocas "Crea hechos para poder procesar las espocas favoritas"
 	(preferencias_grupo (epocas_favoritas $?gen))
 	?hecho <- (epocas_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
@@ -2483,38 +2468,84 @@
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;APLICAMOS LOS FILTROS DE LAS PREGUNTAS
 
-
-(defrule procesado-datos::valorar-edad "Se quitan los cuadros que no cumplen las preguntas"
-	(preferencias_grupo (epocas_favoritas ?epf) (estilos_favoritos ?esf) 
-        (tematicas_obras_fav ?tof) (autores_favoritos ?af))
-	?rec <- (object (is-a Recomendacion) (cuadro ?recom))
-	?cont <-(object (is-a Cuadro) (Pintado_por ?pintado) (Tematica_cuadro ?tematica) (Estilo_cuadro ?estilo)
-    (Epoca_cuadro ?epoca))
-    ;desigualdad que hay que cumplir (solo pasaran las contrarias a lo que queremos, por lo tanto las que se borran)
-    (test (not(= ?epf ?epoca)))
-    (test (not(= ?esf ?estilo)))
-    (test (not(= ?tof ?tematica)))
-    (test (not(= ?af ?pintado)))
+(defrule procesado-datos::valorar-nivel-mayor-a-4 "Se mejora la puntuacion de los cuadros"
+	(datos_grupo (nivel ?nivel))
+	(test (> ?nivel 3)) 
+	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+	?cont <-(object (is-a Cuadro) (Relevancia ?relevancia) (Complejidad ?complejidad))
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(not (valorado-nivel ?cont))
 	=>
-	(send ?rec delete)
+    (if (> ?complejidad 20000) then
+		(bind ?p (+ ?p 60))
+		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una complejidad alta acorde al nivel del visitante -> +60")) 
+	)
+    (if (< ?relevancia 4) then
+        (bind ?p (+ ?p 40))
+		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una relevancia mediana/baja acorde al interes del visitante -> +40")) 
+	)
+	(send ?rec put-puntuacion ?p)
+    (send ?rec put-justificaciones $?just) 
+    (assert (valorado-nivel ?cont))
 )
 
-(defrule procesado-datos::puntuar-epocas "Se puntuan las epocas que cumplen con las preferencias"
-    (preferencias_grupo (epocas_favoritas ?epf))
-    ?rec <- (object (is-a Recomendacion) (cuadro ?recom) (valoracion ?valor))
-    ?cont <- (object (is-a Cuadro) (Epoca_cuadro ?epoca))
-    (test (= ?epf ?epoca))
-    (test (= ?recom ?cont)) ;????
-    =>
-    (bind ?val (+ 10 ?valor)) ;;10 arbitrari
-    (send ?rec ?val)
+(defrule procesado-datos::valorar-nivel-menor-a-4 "Se mejora la puntuacion de los cuadros"
+	(datos_grupo (nivel ?nivel))
+    (printout t ?nivel crlf)
+	(test (< ?nivel 4)) 
+	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+	?cont <-(object (is-a Cuadro) (Relevancia ?relevancia) (Complejidad ?complejidad))
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(not (valorado-nivel ?cont))
+	=>
+    (if (< ?complejidad 20000) then
+		(bind ?p (+ ?p 30))
+		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una complejidad baja acorde al nivel del visitante -> +30")) 
+	)
+    (if (> ?relevancia 4) then
+        (bind ?p (+ ?p 70))
+		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una relevancia alta acorde al interes del visitante -> +70")) 
+	)
+	(send ?rec put-puntuacion ?p)
+    (send ?rec put-justificaciones $?just) 
+    (assert (valorado-nivel ?cont))
 )
+
+(defrule procesado-datos::valorar-autores-favoritos "Se mejora la puntuacion de los cuadros de autores favoritos"
+	?hecho <- (autores ?auto)
+	?cont <-(object (is-a Cuadro) (Pintado_por ?autor))
+	(test (eq (instance-name ?auto) ?autor))
+	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(not (valorado-autor-favorito ?cont))
+	=>
+	(bind ?p (+ ?p 150))
+	(bind ?text (str-cat "Pertenece al autor favorito " (send ?auto get-Nombre) " -> +150"))
+    (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
+	(send ?rec put-puntuacion ?p)
+    (send ?rec put-justificaciones $?just)
+	(assert (valorado-autor-favorito ?cont))
+)
+
+;(defrule procesado-datos::valorar-epocas-favoritas "Se mejora la puntuacion de los cuadros de epocas favoritas"
+;	?hecho <- (epocas_fav ?auto)
+;	?cont <-(object (is-a Cuadro) (Pintado_por ?autor))
+;	(test (eq (instance-name ?auto) ?autor))
+;	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+;	(test (eq (instance-name ?cont) (instance-name ?conta)))
+;	(not (valorado-autor-favorito ?cont))
+;	=>
+;	(bind ?p (+ ?p 150))
+;	(bind ?text (str-cat "Pertenece al autor favorito " (send ?auto get-Nombre) " -> +150"))
+;   (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
+;	(send ?rec put-puntuacion ?p)
+ ;   (send ?rec put-justificaciones $?just)
+	;(assert (valorado-autor-favorito ?cont))
+;)
 
 
 
 ;;PRUEBAAAAAAAAAAAS
-
-
 
 ;;Pintores favoritos primero
 
@@ -2522,12 +2553,12 @@
 	;?hecho <- (filtros Cuadro)
     
 	=>
-	(bind $?lista_des (find-all-instances ((?inst Cuadro)) TRUE))  
+	(bind $?lista (find-all-instances ((?inst Cuadro)) TRUE))  
     (bind ?curr-rec 1)
     (bind ?lista_ord (create$))
     (bind ?index 1)
-    (while (> (length ?lista) 0) do
-	    (bind ?maximo -1)
+    (while (> (length ?lista) 0) do  
+        (bind ?maximo -1)
 	    (bind ?elemento nil)
 	    (progn$ (?curr-rec $?lista)
 		    (bind ?curr-punt (send ?curr-rec get-Relevancia))
@@ -2551,7 +2582,7 @@
 	;?hecho <- (filtros Cuadro)
     
 	=>
-	(bind $?lista_des (find-all-instances ((?inst Cuadro)) TRUE))  
+	(bind $?lista (find-all-instances ((?inst Cuadro)) TRUE))  
     (bind ?curr-rec 1)
     (bind ?lista_ord (create$))
     (bind ?index 1)
