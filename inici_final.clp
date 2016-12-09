@@ -1976,6 +1976,17 @@
 		(create-accessor read-write))
 )
 
+(defclass Dia
+	(is-a USER)
+	(role concrete)
+	(multislot recomendaciones
+		(type INSTANCE)
+		(create-accessor read-write))
+	(slot tiempo-maximo
+		(type INTEGER)
+		(create-accessor read-write))
+)
+
 
 
 ;;; Declaracion de MODULOS!!!! ----------------------------
@@ -2014,6 +2025,48 @@
 
 ;;!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 
+;; Imprime los datos de un contenido
+(defmessage-handler MAIN::Cuadro imprimir ()
+	(format t "Titulo: %s %n" ?self:Titulo)
+	(printout t crlf)
+	(format t "Anyo: %d" ?self:Anyo)
+	(printout t crlf)
+    (format t "Epoca del cuadro: %s" (send ?self:Epoca_cuadro get-Nombre_epoca))
+	(printout t crlf)
+    (format t "Dimensiones: %s" ?self:Dim)
+	(printout t crlf)
+    (format t "Sala: %d" ?self:Sala)
+	(printout t crlf)
+    (format t "Pintado por: %s" (send ?self:Pintado_por get-Nombre))
+	(printout t crlf)
+    (format t "Tematica del cuadro: %s" (send ?self:Tematica_cuadro get-Nombre_tematica))
+	(printout t crlf)
+)
+
+
+(defmessage-handler MAIN::Recomendacion imprimir ()
+	(printout t "-----------------------------------" crlf)
+	(printout t (send ?self:nombre_cuadro imprimir))
+	(printout t crlf)
+	(format t "Nivel de recomendacion: %d %n" ?self:puntuacion)
+	(printout t "Justificacion de la eleccion: " crlf)
+	(progn$ (?curr-just ?self:justificaciones)
+		(printout t ?curr-just crlf)
+	)
+	(printout t crlf)
+	(printout t "-----------------------------------" crlf)
+)
+
+(defmessage-handler MAIN::Dia imprimir ()
+	(printout t "============================================" crlf)
+	(printout t (instance-name ?self) crlf)
+	(bind $?recs ?self:recomendaciones)
+	(progn$ (?curr-rec $?recs)
+		(printout t (send ?curr-rec imprimir))
+	)
+	(printout t "============================================" crlf)
+)
+	
 
 
 
@@ -2023,7 +2076,7 @@
 
 (deftemplate MAIN::datos_grupo
 	(slot descripcion (type STRING) (default "desc")) ;tamanyo del grupo
-	(slot nivel (type INTEGER)(default -1)) ;conocimiento
+	(slot nivel (type INTEGER)(default 1)) ;conocimiento
 	(slot edad (type INTEGER)(default -1)) ;edad general del grupo
     (slot dias (type INTEGER)(default -1)) ;nº dias en visitar el museo
     (slot horasdia (type INTEGER)(default -1)) ;nº horas/dia
@@ -2039,13 +2092,17 @@
 )
 
 ;;; Template para una lista de recomendaciones sin orden
-(deftemplate MAIN::lista-cuadros-desordenada
-	(multislot cuadros_aux (type INSTANCE))
+(deftemplate MAIN::lista-rec-desordenada
+	(multislot recomendaciones (type INSTANCE))
 )
 
 ;;; Template para una lista de recomendaciones con orden
-(deftemplate MAIN::lista-cuadros-ordenada
-	(multislot cuadros (type INSTANCE))
+(deftemplate MAIN::lista-rec-ordenada
+	(multislot recomendaciones (type INSTANCE))
+)
+
+(deftemplate MAIN::lista-dias
+	(multislot dias (type INSTANCE))
 )
 
 ;;; Cuadros ordenados
@@ -2061,6 +2118,20 @@
 	(multislot cuadros (type INSTANCE))
 )
 
+(deffunction maximo-puntuacion ($?lista)
+	(bind ?maximo -1)
+	(bind ?elemento nil)
+	(progn$ (?curr-rec $?lista)
+		(bind ?curr-cont (send ?curr-rec get-nombre_cuadro))
+		(bind ?curr-punt (send ?curr-rec get-puntuacion))
+		(if (> ?curr-punt ?maximo)
+			then 
+			(bind ?maximo ?curr-punt)
+			(bind ?elemento ?curr-rec)
+		)
+	)
+	?elemento
+)
 
 ;;; Funcion para hacer una pregunta no-numerica-univalor
 (deffunction pregunta-datos (?pregunta)
@@ -2182,7 +2253,7 @@
     (if (= ?d 1) then (bind ?descripcion "Individual"))
     (if (= ?d 2) then (bind ?descripcion "Pareja"))
     (if (and(> ?d 2) (< ?d 13)) then (bind ?descripcion "Grupo pequeno (3-12)"))
-    (if (and(> ?d 12) (< ?d 26)) then (bind ?descripcion"Grupo mediano (13-25)"))
+    (if (and(> ?d 12) (< ?d 26)) then (bind ?descripcion "Grupo mediano (13-25)"))
     (if (> ?d 25) then (bind ?descripcion "Grupo grande (+25)"))
 	(assert (datos_grupo (descripcion ?descripcion)))
 )
@@ -2404,20 +2475,21 @@
 	?h3 <- (estilos_fav TRUE|FALSE)
 	?h4 <- (epocas_fav TRUE|FALSE)
 	=>
-	(printout t "Procesando los datos obtenidos..." crlf)
 	(focus procesado-datos)
+    (printout t "Procesando los datos obtenidos..." crlf)
 )
 
 ;;; Modulo procesado de datos ---------------------------------------------------
 
-;;TODOS LOS CUADRO ANADIDOS
-(defrule procesado-datos::anadir-cuadros "Se anaden todos los cuadros"
+;;TODOS LOS CUADRO AÑADIDOS
+(defrule procesado-datos::anadir-cuadros "Se añaden todos los cuadros"
     (declare (salience 10))
 	=>
 	(bind $?lista (find-all-instances ((?inst Cuadro)) TRUE))
 	(progn$ (?curr-con ?lista)
 		(make-instance (gensym) of Recomendacion (nombre_cuadro ?curr-con)(puntuacion 0))
 	)	
+   (printout t "..." crlf)
 )
 
 
@@ -2433,9 +2505,11 @@
 			(assert (autores ?curr-gen))
 		)
 	)
+    (printout t "..." crlf)
 )
 
 (defrule procesado-datos::aux-tematicas "Crea hechos para poder procesar las tematicas favoritas"
+    (printout t "Procesando los datos obtenidos..." crlf)
 	(preferencias_grupo (tematicas_obras_fav $?gen))
 	?hecho <- (tematicas_obras ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
@@ -2446,6 +2520,7 @@
 			(assert (tematicas ?curr-gen))
 		)
 	)
+    (printout t "..." crlf)
 )
 
 (defrule procesado-datos::aux-estilos "Crea hechos para poder procesar los estilos favoritos"
@@ -2472,6 +2547,7 @@
 			(assert (epocas ?curr-gen))
 		)
 	)
+    (printout t "..." crlf)
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;APLICAMOS LOS FILTROS DE LAS PREGUNTAS
@@ -2483,41 +2559,42 @@
 	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
 	?cont <-(object (is-a Cuadro) (Relevancia ?relevancia) (Complejidad ?complejidad))
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
-	(not (valorado-nivel ?cont))
+	(not (valorado-nivel ?cont ?nivel))
 	=>
-    (if (> ?complejidad 20000) then
-		(bind ?p (+ ?p 60))
+    (if (> ?complejidad 10000) then
+		(bind ?p (+ ?p 100))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una complejidad alta acorde al nivel del visitante -> +60")) 
 	)
     (if (< ?relevancia 4) then
-        (bind ?p (+ ?p 40))
+        (bind ?p (+ ?p 50))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una relevancia mediana/baja acorde al interes del visitante -> +40")) 
 	)
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just) 
-    (assert (valorado-nivel ?cont))
+    (assert (valorado-nivel ?cont ?nivel))
+    (printout t "Valorando nivel del grupo..." crlf)
 )
 
 (defrule procesado-datos::valorar-nivel-menor-a-4 "Se mejora la puntuacion de los cuadros"
 	(datos_grupo (nivel ?nivel))
-    (printout t ?nivel crlf)
 	(test (< ?nivel 4)) 
 	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
 	?cont <-(object (is-a Cuadro) (Relevancia ?relevancia) (Complejidad ?complejidad))
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
-	(not (valorado-nivel ?cont))
+	(not (valorado-nivel ?cont ?nivel))
 	=>
-    (if (< ?complejidad 20000) then
+    (if (< ?complejidad 10000) then
 		(bind ?p (+ ?p 30))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una complejidad baja acorde al nivel del visitante -> +30")) 
 	)
-    (if (> ?relevancia 4) then
-        (bind ?p (+ ?p 70))
+    (if (> ?relevancia 2) then
+        (bind ?p (+ ?p 100))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una relevancia alta acorde al interes del visitante -> +70")) 
 	)
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just) 
-    (assert (valorado-nivel ?cont))
+    (assert (valorado-nivel ?cont ?nivel))
+    (printout t "Valorando nivel del grupo..." crlf)
 )
 
 (defrule procesado-datos::valorar-autores-favoritos "Se mejora la puntuacion de los cuadros de autores favoritos"
@@ -2526,30 +2603,196 @@
 	(test (eq (instance-name ?auto) ?autor))
 	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
-	(not (valorado-autor-favorito ?cont))
+	(not (valorado-autor-favorito ?cont ?auto))
 	=>
-	(bind ?p (+ ?p 150))
-	(bind ?text (str-cat "Pertenece al autor favorito " (send ?auto get-Nombre) " -> +150"))
+	(bind ?p (+ ?p 10))
+	(bind ?text (str-cat "Pertenece al autor favorito: " (send ?auto get-Nombre) " -> +10"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
-	(assert (valorado-autor-favorito ?cont))
+	(assert (valorado-autor-favorito ?cont ?auto))
+    (printout t "Comprovando autores favoritos..." crlf)
 )
 
+(defrule procesado-datos::valorar-tematicas-favoritas "Se mejora la puntuacion de las tematicas favoritas"
+	?hecho <- (tematicas ?tem)
+	?cont <-(object (is-a Cuadro) (Tematica_cuadro ?tema))
+	(test (eq (instance-name ?tem) ?tema))
+	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(not (valorar-tematicas-favoritas ?cont ?tem))
+	=>
+	(bind ?p (+ ?p 10))
+	(bind ?text (str-cat "Pertenece a la tematica favorita: " (send ?tem get-Nombre_tematica) " -> +10"))
+    (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
+	(send ?rec put-puntuacion ?p)
+    (send ?rec put-justificaciones $?just)
+	(assert (valorar-tematicas-favoritas ?cont ?tem))
+    (printout t "Comprovando tematicas favoritas..." crlf)
+)
 
+(defrule procesado-datos::valorar-estilos-favoritos "Se mejora la puntuacion de los estilos favoritos"
+	?hecho <- (estilos ?estilo)
+	?cont <-(object (is-a Cuadro) (Estilo_cuadro ?estilos))
+	(test (eq (instance-name ?estilo) ?estilos))
+	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(not (valorar-estilos-favoritos ?cont ?estilo))
+	=>
+	(bind ?p (+ ?p 10))
+	(bind ?text (str-cat "Pertenece al estilo favorito: " (send ?estilo get-Nombre_estilo) " -> +10"))
+    (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
+	(send ?rec put-puntuacion ?p)
+    (send ?rec put-justificaciones $?just)
+	(assert (valorar-estilos-favoritos ?cont ?estilo))
+     (printout t "Comprovando estilos favoritos..." crlf)
+)
 
+(defrule procesado-datos::valorar-epocas-favorias "Se mejora la puntuacion de las epocas favoritas"
+	?hecho <- (epocas ?epoca)
+	?cont <-(object (is-a Cuadro) (Epoca_cuadro ?epocas))
+	(test (eq (instance-name ?epoca) ?epocas))
+	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
+	(test (eq (instance-name ?cont) (instance-name ?conta)))
+	(not (valorar-epocas-favorias ?cont ?epoca))
+	=>
+	(bind ?p (+ ?p 10))
+	(bind ?text (str-cat "Pertenece a la epoca favorita: " (send ?epoca get-Nombre_epoca) " -> +10"))
+    (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
+	(send ?rec put-puntuacion ?p)
+    (send ?rec put-justificaciones $?just)
+	(assert (valorar-epocas-favorias ?cont ?epoca))
+    (printout t "Comprovando epocas favoritas..." crlf)
+)
 
+(defrule procesado-datos::pasar-a-generacion "Pasa al modulo de generacion de respuestas"
+	(declare(salience -10))
+	=>
+	(printout t "Generando respuesta..." crlf)
+	(focus generacion_soluciones)
+)
 
+;;; Módulo de generacion de respuestas -------------------------------------------------
 
+(defrule generacion_soluciones::crea-lista-recomendaciones "Se crea una lista de recomendaciones para ordenarlas"
+	(not (lista-rec-desordenada))
+	=>
+	(assert (lista-rec-desordenada))
+)
 
+(defrule generacion_soluciones::anyadir-recomendacion "Anyade una recomendacion a la lista de recomendaciones"
+	(declare (salience 10))
+	?rec <- (object (is-a Recomendacion))
+	?hecho <- (lista-rec-desordenada (recomendaciones $?lista))
+	(test (not (member$ ?rec $?lista)))
+	=>
+	(bind $?lista (insert$ $?lista (+ (length$ $?lista) 1) ?rec))
+	(modify ?hecho (recomendaciones $?lista))
+)
 
+(defrule generacion_soluciones::crea-lista-ordenada "Se crea una lista ordenada de contenido"
+	(not (lista-rec-ordenada))
+	(lista-rec-desordenada (recomendaciones $?lista))
+	=>
+	(bind $?resultado (create$ ))
+	(while (not (eq (length$ $?lista) 0))  do
+		(bind ?curr-rec (maximo-puntuacion $?lista))
+		(bind $?lista (delete-member$ $?lista ?curr-rec))
+		(bind $?resultado (insert$ $?resultado (+ (length$ $?resultado) 1) ?curr-rec))
+	)
+	(assert (lista-rec-ordenada (recomendaciones $?resultado)))
+    (printout t "Ordenando obras de arte..." crlf)
+)
 
+(defrule generacion_soluciones::asigna-contenido-a-dias "Se asigna los contenidos recomendados a dias"
+    ?g <- (datos_grupo (dias ?dias) (horasdia ?horas) (descripcion ?descripcion) (nivel ?nivel)); 
+	(lista-rec-ordenada (recomendaciones $?recs))
+	(not (lista-dias))
+	=>
+    (bind ?horas (* ?horas 60))
+	(bind $?lista (create$ ))
+    (while (not(= (length$ $?lista) ?dias)) do
+        (bind $?lista (insert$ $?lista (+ (length$ $?lista) 1) (make-instance (gensym) of Dia (tiempo-maximo ?horas))))
+    )
+	(bind ?i 1)
+	(bind ?rec-ant FALSE)
+	(while (and (> (length$ $?recs) 0) (< ?i ?dias)) 
+		(bind ?dia (nth$ ?i $?lista))
+		(bind $?recs-dia (create$ ))
+		(bind ?t-max (send ?dia get-tiempo-maximo))
+		(bind ?t-ocu 0)
+		(bind ?try 1)
+		(bind ?asignados 0)
+        (bind ?j 1)
+		(while (and(and(< ?t-ocu ?t-max) (< ?try 4)) (> (length$ $?recs) 0)) do
+			(bind ?rec (nth$ ?j $?recs));;;;;;;;;;;;;;;;;;;;;;;;;
+			(bind ?cont (send ?rec get-nombre_cuadro))
+			(bind ?a (send ?cont get-Complejidad))
+            (if (or (eq ?descripcion "Pareja") (eq ?descripcion "Individual")) then
+                (if (> ?a 120000) then (bind ?t 13)) 
+                (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 10))
+                (if (and (> ?a 2000) (< ?a 13000)) then (bind ?t 6))
+                (if (and (> ?a 0) (< ?a 2000)) then (bind ?t 4))
+            )
+            (if (eq ?descripcion "Grupo pequeno (3-12)") then
+                (if (> ?a 120000) then (bind ?t 16))
+                (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 12))
+                (if (and (> ?a 2000) (< ?a 13000)) then (bind ?t 8))
+                (if (and (> ?a 0) (< ?a 2000)) then (bind ?t 5))
 
+            )
+            (if (eq ?descripcion "Grupo mediano (13-25)") then
+                (if (> ?a 120000) then (bind ?t 18)) 
+                (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 14))
+                (if (and (> ?a 2000) (< ?a 13000)) then (bind ?t 10))
+                (if (and (> ?a 0) (< ?a 2000)) then (bind ?t 7))
 
+            )
+            (if (eq ?descripcion "Grupo grande (+25)") then
+                (if (> ?a 120000) then (bind ?t 20)) 
+                (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 15))
+                (if (and (> ?a 2000) (< ?a 13000)) then (bind ?t 12))
+                (if (and (> ?a 0) (< ?a 2000)) then (bind ?t 8))
 
+            )
+			(if (< (+ ?t-ocu ?t) ?t-max) 
+				then
+					(bind ?t-ocu (+ ?t-ocu ?t))
+					(bind ?try 1)
+					(bind ?asignados (+ ?asignados 1))
+					(bind ?recs-dia (insert$ $?recs-dia (+ (length$ $?recs-dia) 1) ?rec))
+					(bind $?recs (delete-member$ $?recs ?rec))
+				else
+					(bind ?try (+ ?try 1))
+			)
+        (bind ?j (+ ?j 1))
+		)
+		(send ?dia put-recomendaciones $?recs-dia)
+		(bind ?i (+ ?i 1))
+	)
+	(assert (lista-dias (dias $?lista)))
+    (printout t "Computando una ruta optima de visitas..." crlf)
+)
 
+(defrule generacion_soluciones::pasar-a-resultados "Se pasa al modulo de presentacion"
+	(lista-dias)
+	=>
+	(focus resultados_al_grupo)
+)
 
-
+;;; Modulo de presentacion de resultados ----------------------------------------------------
+(defrule resultados_al_grupo::mostrar-respuesta "Muestra el contenido escogido"
+	(lista-dias (dias $?dias))
+	(not (final))
+	=>
+	(printout t crlf)
+	(format t "Esta es nuestra recomendacion de ruta para el grupo. Esperamos que la disfruteis")
+	(printout t crlf)
+	(progn$ (?curr-dia $?dias)
+		(printout t (send ?curr-dia imprimir))
+	)
+	(assert (final))
+)
 
 
 
