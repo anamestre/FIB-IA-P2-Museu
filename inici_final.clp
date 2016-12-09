@@ -2059,7 +2059,7 @@
 
 (defmessage-handler MAIN::Dia imprimir ()
 	(printout t "============================================" crlf)
-	(printout t (instance-name ?self) crlf)
+	(printout t (instance-name ?self) crlf) ;;CANVIAR A NUM DIA
 	(bind $?recs ?self:recomendaciones)
 	(progn$ (?curr-rec $?recs)
 		(printout t (send ?curr-rec imprimir))
@@ -2076,7 +2076,7 @@
 
 (deftemplate MAIN::datos_grupo
 	(slot descripcion (type STRING) (default "desc")) ;tamanyo del grupo
-	(slot nivel (type INTEGER)(default 1)) ;conocimiento
+	(slot nivel (type INTEGER)(default -1)) ;conocimiento
 	(slot edad (type INTEGER)(default -1)) ;edad general del grupo
     (slot dias (type INTEGER)(default -1)) ;nº dias en visitar el museo
     (slot horasdia (type INTEGER)(default -1)) ;nº horas/dia
@@ -2274,7 +2274,7 @@
     (test (< ?dias 0) ;(< ?horasdia 0) (< ?tiempo 0))
     )
 	=>
-	(bind ?dias (pregunta-numerica "¿Durante cuantos dias realizara la visita?" 1 365))
+	(bind ?dias (pregunta-numerica "¿Durante cuantos dias realizara la visita?" 1 7))
 	(modify ?g (dias ?dias))
     ;(bind ?horasdia (pregunta-numerica "¿Cuantas horas dedicara diariamente a visitar el museo?" 1 24))
 	;(modify ?g (horasdia ?horasdia))
@@ -2285,7 +2285,7 @@
 	?g <- (datos_grupo (horasdia ?horasdia))
     (test (< ?horasdia 0))    
     =>
-    (bind ?horasdia (pregunta-numerica "¿Cuantas horas dedicara diariamente a visitar el museo?" 1 24))
+    (bind ?horasdia (pregunta-numerica "¿Cuantas horas dedicara diariamente a visitar el museo?" 1 6))
 	(modify ?g (horasdia ?horasdia))
 )
 
@@ -2716,7 +2716,7 @@
     )
 	(bind ?i 1)
 	(bind ?rec-ant FALSE)
-	(while (and (> (length$ $?recs) 0) (< ?i ?dias)) 
+	(while (and (> (length$ $?recs) 0) (<= ?i ?dias)) 
 		(bind ?dia (nth$ ?i $?lista))
 		(bind $?recs-dia (create$ ))
 		(bind ?t-max (send ?dia get-tiempo-maximo))
@@ -2728,6 +2728,7 @@
 			(bind ?rec (nth$ ?j $?recs));;;;;;;;;;;;;;;;;;;;;;;;;
 			(bind ?cont (send ?rec get-nombre_cuadro))
 			(bind ?a (send ?cont get-Complejidad))
+;;AQUESTOS IFS DE BAIX ESTAN BE
             (if (or (eq ?descripcion "Pareja") (eq ?descripcion "Individual")) then
                 (if (> ?a 120000) then (bind ?t 13)) 
                 (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 10))
@@ -2742,7 +2743,7 @@
 
             )
             (if (eq ?descripcion "Grupo mediano (13-25)") then
-                (if (> ?a 120000) then (bind ?t 18)) 
+                (if (> ?a 120000) then (bind ?t 18))
                 (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 14))
                 (if (and (> ?a 2000) (< ?a 13000)) then (bind ?t 10))
                 (if (and (> ?a 0) (< ?a 2000)) then (bind ?t 7))
@@ -2753,8 +2754,8 @@
                 (if (and (> ?a 13000) (< ?a 120000)) then (bind ?t 15))
                 (if (and (> ?a 2000) (< ?a 13000)) then (bind ?t 12))
                 (if (and (> ?a 0) (< ?a 2000)) then (bind ?t 8))
-
             )
+;;AQUESTOS IFS DE DALT ESTAN BE
 			(if (< (+ ?t-ocu ?t) ?t-max) 
 				then
 					(bind ?t-ocu (+ ?t-ocu ?t))
@@ -2767,8 +2768,8 @@
 			)
         (bind ?j (+ ?j 1))
 		)
-		(send ?dia put-recomendaciones $?recs-dia)
-		(bind ?i (+ ?i 1))
+		(send ?dia put-recomendaciones $?recs-dia)		
+        (bind ?i (+ ?i 1))
 	)
 	(assert (lista-dias (dias $?lista)))
     (printout t "Computando una ruta optima de visitas..." crlf)
