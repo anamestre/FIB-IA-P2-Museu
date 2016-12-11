@@ -2626,8 +2626,8 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorado-autor-favorito ?cont ?auto))
 	=>
-	(bind ?p (+ ?p 10))
-	(bind ?text (str-cat "Pertenece al autor favorito: " (send ?auto get-Nombre) " -> +10"))
+	(bind ?p (+ ?p 30))
+	(bind ?text (str-cat "Pertenece al autor favorito: " (send ?auto get-Nombre) " -> +30"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
@@ -2643,8 +2643,8 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorar-tematicas-favoritas ?cont ?tem))
 	=>
-	(bind ?p (+ ?p 10))
-	(bind ?text (str-cat "Pertenece a la tematica favorita: " (send ?tem get-Nombre_tematica) " -> +10"))
+	(bind ?p (+ ?p 30))
+	(bind ?text (str-cat "Pertenece a la tematica favorita: " (send ?tem get-Nombre_tematica) " -> +30"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
@@ -2660,8 +2660,8 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorar-estilos-favoritos ?cont ?estilo))
 	=>
-	(bind ?p (+ ?p 10))
-	(bind ?text (str-cat "Pertenece al estilo favorito: " (send ?estilo get-Nombre_estilo) " -> +10"))
+	(bind ?p (+ ?p 30))
+	(bind ?text (str-cat "Pertenece al estilo favorito: " (send ?estilo get-Nombre_estilo) " -> +30"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
@@ -2677,8 +2677,8 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorar-epocas-favorias ?cont ?epoca))
 	=>
-	(bind ?p (+ ?p 10))
-	(bind ?text (str-cat "Pertenece a la epoca favorita: " (send ?epoca get-Nombre_epoca) " -> +10"))
+	(bind ?p (+ ?p 30))
+	(bind ?text (str-cat "Pertenece a la epoca favorita: " (send ?epoca get-Nombre_epoca) " -> +30"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
@@ -2803,7 +2803,7 @@
 (defrule generacion_soluciones::ordena-por-salas "Ordena cada dia por salas."
     (lista-dias (dias $?lista))
     =>
-    (bind $?dias-orden-salas (create$))
+    ;;(bind $?dias-orden-salas (create$))
     (progn$ (?curr-dia $?lista)
         (bind $?resultado (create$ ))
       ;;  (bind $?recs ?curr-dia:recomendaciones)
@@ -2814,9 +2814,10 @@
             (bind $?resultado (insert$ $?resultado (+ (length$ $?resultado) 1) ?curr-rec))
         )
         (send ?curr-dia put-recomendaciones $?resultado)
-        (printout t $?resultado crlf)
+;;        (printout t $?resultado crlf)
+       
     )
-    (assert (dias-orden-sala (dias $?dias-orden-salas))) 
+    (assert (dias-orden-sala (dias $?lista))) 
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
