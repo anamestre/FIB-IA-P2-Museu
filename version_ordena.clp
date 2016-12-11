@@ -2105,7 +2105,7 @@
 	(multislot dias (type INSTANCE))
 )
 
-;;; ANA
+
 (deftemplate MAIN::dias-orden-sala
 	(multislot dias (type INSTANCE))
 )
@@ -2137,7 +2137,7 @@
 	)
 	?elemento
 )
-;; ANAA!
+
 (deffunction orden-sala ($?lista)
 	(bind ?minimo 6)
 	(bind ?elemento nil)
@@ -2801,15 +2801,12 @@
 )
 
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;ANAA
-
 (defrule generacion_soluciones::ordena-por-salas "Ordena cada dia por salas."
     (lista-dias (dias $?lista))
     =>
-    ;;(bind $?dias-orden-salas (create$))
     (progn$ (?curr-dia $?lista)
         (bind $?resultado (create$ ))
-      ;;  (bind $?recs ?curr-dia:recomendaciones)
+
         (bind $?recs (send ?curr-dia get-recomendaciones))
         (while (not (eq (length$ $?recs) 0))  do
             (bind ?curr-rec (orden-sala $?recs))
@@ -2817,16 +2814,14 @@
             (bind $?resultado (insert$ $?resultado (+ (length$ $?resultado) 1) ?curr-rec))
         )
         (send ?curr-dia put-recomendaciones $?resultado)
-;;        (printout t $?resultado crlf)
        
     )
     (assert (dias-orden-sala (dias $?lista))) 
 )
 
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 
 (defrule generacion_soluciones::pasar-a-resultados "Se pasa al modulo de presentacion"
-;;	(lista-dias)
     (dias-orden-sala)
 	=>
 	(focus resultados_al_grupo)
@@ -2834,7 +2829,6 @@
 
 ;;; Modulo de presentacion de resultados ----------------------------------------------------
 (defrule resultados_al_grupo::mostrar-respuesta "Muestra el contenido escogido"
-	;;(lista-dias (dias $?dias))
 	(dias-orden-sala (dias $?dias))
 	(not (final))
 	=>
