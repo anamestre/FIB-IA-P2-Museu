@@ -678,6 +678,7 @@
 	(Pintado_por [Cuadres_Class64])
 	(Relevancia 2)
 	(Sala 2)
+    (Tematica_cuadro [Cuadres_Class24])
 	(Titulo "Autoretrato con baston"))
 
 ([Cuadres_Class116] of  Cuadro
@@ -2709,6 +2710,7 @@
 	(lista-rec-ordenada (recomendaciones $?recs))
 	(not (lista-dias))
 	=>
+    (printout t "La lista de recomendaciones es: " $?recs crlf)
     (bind ?horas (* ?horas 60))
 	(bind $?lista (create$ ))
     (while (not(= (length$ $?lista) ?dias)) do
@@ -2724,7 +2726,7 @@
 		(bind ?try 1)
 		(bind ?asignados 0)
         (bind ?j 1)
-		(while (and(and(< ?t-ocu ?t-max) (< ?try 4)) (> (length$ $?recs) 0)) do
+		(while (and(and(< ?t-ocu ?t-max) (< ?try 4)) (> (length$ $?recs) 0) (<= ?j (length$ ?recs))) do
 			(bind ?rec (nth$ ?j $?recs));;;;;;;;;;;;;;;;;;;;;;;;;
 			(bind ?cont (send ?rec get-nombre_cuadro))
 			(bind ?a (send ?cont get-Complejidad))
