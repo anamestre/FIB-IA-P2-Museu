@@ -2060,15 +2060,14 @@
 
 (defmessage-handler MAIN::Dia imprimir ()
 	(printout t "============================================" crlf)
-	(printout t (instance-name ?self) crlf) ;;CANVIAR A NUM DIA
+	;(printout t (instance-name ?self) crlf) ;;CANVIAR A NUM DIA
+    
 	(bind $?recs ?self:recomendaciones)
 	(progn$ (?curr-rec $?recs)
 		(printout t (send ?curr-rec imprimir))
 	)
 	(printout t "============================================" crlf)
 )
-	
-
 
 
 ;;; Declaracion de templates --------------------------
@@ -2229,7 +2228,7 @@
     (format t "%s" "Indica los numeros referentes a los pintores separados por un espacio: ")
     (bind ?resp (readline))
     (bind ?numeros (str-explode ?resp))
-    (bind $?lista (create$ ))
+    (bind $?lista (create$))
     (progn$ (?var ?numeros) 
         (if (and (integerp ?var) (and (>= ?var 0) (<= ?var (length$ ?valores-posibles))))
             then 
@@ -2238,7 +2237,7 @@
                 )
         ) 
     )
-    (if (member$ 0 ?lista) then (bind ?lista (create$ 0)))    
+    (if (or(member$ 0 ?lista)(= (length$ ?lista) 0)) then (bind ?lista (create$ 0))) 
     ?lista
 )
 ;;; Funcion para hacer pregunta con indice de respuestas posibles
@@ -2348,9 +2347,9 @@
 	(bind ?respuesta (pregunta-indice "Cual de estas obras es de Dali" ?formatos))
 	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
     
-    (bind ?formatos (create$ "El Greco." "Alegoria de la poesia." "Francisco de Goya." "Diego Velazquez."))
+    (bind ?formatos (create$ "El Greco." "Francisco de Goya." "Diego Velazquez."))
 	(bind ?respuesta (pregunta-indice "¿Quien pinto el cuadro 'Las Hilanderas'?" ?formatos))
-	(if (= ?respuesta 3) then (bind ?puntuacio (+ 1 ?puntuacio)))
+	(if (= ?respuesta 2) then (bind ?puntuacio (+ 1 ?puntuacio)))
 
     
     (bind ?formatos (create$ "Klimt" "Tiziano" "Yanyez" "El Greco"))
@@ -2517,6 +2516,7 @@
 
 (defrule procesado-datos::aux-autores "Crea hechos para poder procesar los autores favoritos"
 	(preferencias_grupo (autores_favoritos $?gen))
+    (delete-member$ $?gen nil)
 	?hecho <- (autores_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2532,6 +2532,7 @@
 (defrule procesado-datos::aux-tematicas "Crea hechos para poder procesar las tematicas favoritas"
     (printout t "Procesando los datos obtenidos..." crlf)
 	(preferencias_grupo (tematicas_obras_fav $?gen))
+    (delete-member$ $?gen nil)
 	?hecho <- (tematicas_obras ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2546,6 +2547,7 @@
 
 (defrule procesado-datos::aux-estilos "Crea hechos para poder procesar los estilos favoritos"
 	(preferencias_grupo (estilos_favoritos $?gen))
+    (delete-member$ $?gen nil)
 	?hecho <- (estilos_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2559,6 +2561,7 @@
 
 (defrule procesado-datos::aux-epocas "Crea hechos para poder procesar las espocas favoritas"
 	(preferencias_grupo (epocas_favoritas $?gen))
+    (delete-member$ $?gen nil)
 	?hecho <- (epocas_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2838,7 +2841,14 @@
 	(printout t crlf)
 	(format t "Esta es nuestra recomendacion de ruta para el grupo. Esperamos que la disfruteis")
 	(printout t crlf)
+    (format t "%n")
+    (printout t crlf)
+    (printout t "============================================" crlf)
+    (bind ?i 0)
 	(progn$ (?curr-dia $?dias)
+        (bind ?i(+ ?i 1))
+        	(format t "Dia %d" ?i)
+            (printout t crlf)
 		(printout t (send ?curr-dia imprimir))
 	)
 	(assert (final))
