@@ -2225,7 +2225,7 @@
             (bind ?linea (format nil "  %d. %s" ?var-index ?var))
             (printout t ?linea crlf)
     )
-    (format t "%s" "Indica los numeros referentes a los pintores separados por un espacio: ")
+    (format t "%s" "Indica los numeros referentes a las preferencias separados por un espacio: ")
     (bind ?resp (readline))
     (bind ?numeros (str-explode ?resp))
     (bind $?lista (create$))
@@ -2237,7 +2237,8 @@
                 )
         ) 
     )
-    (if (or(member$ 0 ?lista)(= (length$ ?lista) 0)) then (bind ?lista (create$ 0))) 
+    (if (or(member$ 0 ?lista)(= (length$ ?lista) 0)) then (bind ?lista (create$ ))) 
+    ;(if (member$ 0 ?lista) then (bind ?lista (create$ 0)))
     ?lista
 )
 ;;; Funcion para hacer pregunta con indice de respuestas posibles
@@ -2324,21 +2325,18 @@
     (test( < ?nivel 0))
 	=>
     (bind ?puntuacio 0)
-	(bind ?respuesta (pregunta-si-no "Conoces 'El Grito' de Munch?"))
-	(if (eq ?respuesta TRUE)
-		then (bind ?puntuacio (+ 1 ?puntuacio))       
-	)
+	(bind ?formatos (create$ "Si" "No"))
+	(bind ?respuesta (pregunta-indice "Conoces 'El Grito' de Munch?" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
+   
+    (bind ?formatos (create$ "Si" "No"))
+	(bind ?respuesta (pregunta-indice "Conoces 'Las Meninas' de Velazquez?" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
 
-    (bind ?respuesta (pregunta-si-no "Conoces 'Las Meninas' de Velazquez?"))
-	(if (eq ?respuesta TRUE)
-		then (bind ?puntuacio (+ 1 ?puntuacio))
-	)
-
-    (bind ?respuesta (pregunta-si-no "Conoces 'El nacimiento de Venus' de Botticelli?"))
-	(if (eq ?respuesta TRUE)
-		then (bind ?puntuacio (+ 1 ?puntuacio))
-	)
-    
+    (bind ?formatos (create$ "Si" "No"))
+	(bind ?respuesta (pregunta-indice "Conoces 'El nacimiento de Venus' de Boticelli" ?formatos))
+	(if (= ?respuesta 1) then (bind ?puntuacio (+ 1 ?puntuacio)))
+		
 	(bind ?formatos (create$ "La Gioconda (la Mona Lisa)." "El jardin de las delicias." "La ultima cena."))
 	(bind ?respuesta (pregunta-indice "Cual de los siguientes titulos no pertenece a un cuadro de Leonardo da Vinci " ?formatos))
 	(if (= ?respuesta 2) then (bind ?puntuacio (+ 1 ?puntuacio)))
@@ -2515,8 +2513,9 @@
 
 
 (defrule procesado-datos::aux-autores "Crea hechos para poder procesar los autores favoritos"
-	(preferencias_grupo (autores_favoritos $?gen))
-    (delete-member$ $?gen nil)
+
+    (preferencias_grupo (autores_favoritos $?gen))
+    ;(delete-member$ $?gen nil)
 	?hecho <- (autores_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2530,9 +2529,8 @@
 )
 
 (defrule procesado-datos::aux-tematicas "Crea hechos para poder procesar las tematicas favoritas"
-    (printout t "Procesando los datos obtenidos..." crlf)
 	(preferencias_grupo (tematicas_obras_fav $?gen))
-    (delete-member$ $?gen nil)
+    ;(delete-member$ $?gen nil)
 	?hecho <- (tematicas_obras ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2546,8 +2544,9 @@
 )
 
 (defrule procesado-datos::aux-estilos "Crea hechos para poder procesar los estilos favoritos"
-	(preferencias_grupo (estilos_favoritos $?gen))
-    (delete-member$ $?gen nil)
+
+    (preferencias_grupo (estilos_favoritos $?gen))
+    ;(delete-member$ $?gen nil)
 	?hecho <- (estilos_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2560,8 +2559,9 @@
 )
 
 (defrule procesado-datos::aux-epocas "Crea hechos para poder procesar las espocas favoritas"
-	(preferencias_grupo (epocas_favoritas $?gen))
-    (delete-member$ $?gen nil)
+    ;(printout t "Procesando epocas..." crlf)	
+    (preferencias_grupo (epocas_favoritas $?gen))
+    ;(delete-member$ $?gen nil)
 	?hecho <- (epocas_fav ?aux)
 	(test (or (eq ?aux TRUE) (eq ?aux FALSE)))
 	=>
@@ -2586,11 +2586,11 @@
 	(not (valorado-nivel ?cont ?nivel))
 	=>
     (if (> ?complejidad 10000) then
-		(bind ?p (+ ?p 100))
+		(bind ?p (+ ?p 60))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una complejidad alta acorde al nivel del visitante -> +60")) 
 	)
     (if (< ?relevancia 4) then
-        (bind ?p (+ ?p 50))
+        (bind ?p (+ ?p 40))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una relevancia mediana/baja acorde al interes del visitante -> +40")) 
 	)
 	(send ?rec put-puntuacion ?p)
@@ -2612,7 +2612,7 @@
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una complejidad baja acorde al nivel del visitante -> +30")) 
 	)
     (if (> ?relevancia 2) then
-        (bind ?p (+ ?p 100))
+        (bind ?p (+ ?p 70))
 		(bind $?just (insert$ $?just (+ (length$ $?just) 1) "Tiene una relevancia alta acorde al interes del visitante -> +70")) 
 	)
 	(send ?rec put-puntuacion ?p)
@@ -2627,15 +2627,16 @@
 	(test (eq (instance-name ?auto) ?autor))
 	?rec <- (object (is-a Recomendacion) (nombre_cuadro ?conta) (puntuacion ?p) (justificaciones $?just))
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
-	(not (valorado-autor-favorito ?cont ?auto))
+	(not (valorado-autor-favorito ?cont ?auto)) ;?auto al final
 	=>
-	(bind ?p (+ ?p 30))
-	(bind ?text (str-cat "Pertenece al autor favorito: " (send ?auto get-Nombre) " -> +30"))
+	(bind ?p (+ ?p 50))
+	(bind ?text (str-cat "Pertenece al autor favorito: " (send ?auto get-Nombre) " -> +50"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
 	(assert (valorado-autor-favorito ?cont ?auto))
-    (printout t "Comprovando autores favoritos..." crlf)
+    (printout t "Estoy en el autor " ?auto clrf)
+    (printout t "Comprobando autores favoritos..." crlf)
 )
 
 (defrule procesado-datos::valorar-tematicas-favoritas "Se mejora la puntuacion de las tematicas favoritas"
@@ -2646,13 +2647,13 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorar-tematicas-favoritas ?cont ?tem))
 	=>
-	(bind ?p (+ ?p 30))
-	(bind ?text (str-cat "Pertenece a la tematica favorita: " (send ?tem get-Nombre_tematica) " -> +30"))
+	(bind ?p (+ ?p 50))
+	(bind ?text (str-cat "Pertenece a la tematica favorita: " (send ?tem get-Nombre_tematica) " -> +50"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
 	(assert (valorar-tematicas-favoritas ?cont ?tem))
-    (printout t "Comprovando tematicas favoritas..." crlf)
+    (printout t "Comprobando tematicas favoritas..." crlf)
 )
 
 (defrule procesado-datos::valorar-estilos-favoritos "Se mejora la puntuacion de los estilos favoritos"
@@ -2663,13 +2664,13 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorar-estilos-favoritos ?cont ?estilo))
 	=>
-	(bind ?p (+ ?p 30))
-	(bind ?text (str-cat "Pertenece al estilo favorito: " (send ?estilo get-Nombre_estilo) " -> +30"))
+	(bind ?p (+ ?p 50))
+	(bind ?text (str-cat "Pertenece al estilo favorito: " (send ?estilo get-Nombre_estilo) " -> +50"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
 	(assert (valorar-estilos-favoritos ?cont ?estilo))
-     (printout t "Comprovando estilos favoritos..." crlf)
+     (printout t "Comprobando estilos favoritos..." crlf)
 )
 
 (defrule procesado-datos::valorar-epocas-favorias "Se mejora la puntuacion de las epocas favoritas"
@@ -2680,13 +2681,13 @@
 	(test (eq (instance-name ?cont) (instance-name ?conta)))
 	(not (valorar-epocas-favorias ?cont ?epoca))
 	=>
-	(bind ?p (+ ?p 30))
-	(bind ?text (str-cat "Pertenece a la epoca favorita: " (send ?epoca get-Nombre_epoca) " -> +30"))
+	(bind ?p (+ ?p 50))
+	(bind ?text (str-cat "Pertenece a la epoca favorita: " (send ?epoca get-Nombre_epoca) " -> +50"))
     (bind $?just (insert$ $?just (+ (length$ $?just) 1) ?text))
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
 	(assert (valorar-epocas-favorias ?cont ?epoca))
-    (printout t "Comprovando epocas favoritas..." crlf)
+    (printout t "Comprobando epocas favoritas..." crlf)
 )
 
 (defrule procesado-datos::pasar-a-generacion "Pasa al modulo de generacion de respuestas"
