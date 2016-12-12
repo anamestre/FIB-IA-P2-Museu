@@ -2608,7 +2608,6 @@
 	(send ?rec put-puntuacion ?p)
     (send ?rec put-justificaciones $?just)
 	(assert (valorado-autor-favorito ?cont ?auto))
-    (printout t "Estoy en el autor " ?auto clrf)
     (printout t "Comprobando autores favoritos..." crlf)
 )
 
@@ -2707,7 +2706,6 @@
 	(lista-rec-ordenada (recomendaciones $?recs))
 	(not (lista-dias))
 	=>
-    (printout t "La lista de recomendaciones es: " $?recs crlf)
     (bind ?horas (* ?horas 60))
 	(bind $?lista (create$ ))
     (while (not(= (length$ $?lista) ?dias)) do
@@ -2801,7 +2799,7 @@
 	(not (final))
 	=>
 	(printout t crlf)
-	(format t "Esta es nuestra recomendacion de ruta para el grupo. Esperamos que la disfruteis")
+	(format t "Esta es nuestra recomendacion de ruta para el grupo. Esperamos que la disfruteis.")
 	(printout t crlf)
     (format t "%n")
     (printout t crlf)
